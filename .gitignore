@@ -1,0 +1,7 @@
+# Date persistente și secrete — nu se publică în repository
+private_portal/portal.db
+*.db
+*.sqlite
+*.sqlite3
+private_portal/api/config.php
+private_portal/api/graph_config.php

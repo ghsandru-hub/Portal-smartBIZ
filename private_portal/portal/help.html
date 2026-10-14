@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghid de utilizare — Launch Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #f8fafc;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2D8B8E 0%, #1F4788 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1F4788;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D8B8E;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+        
+        .section p {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+        
+        .screenshot {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .screenshot-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .ui-mockup {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #2D8B8E;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: #2D8B8E;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-content strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tip {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .tip strong {
+            color: #1e40af;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .feature-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature-card h4 {
+            color: #1F4788;
+            margin-bottom: 0.5rem;
+            font-size: 16px;
+        }
+        
+        .feature-card p {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        .kbd {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 13px;
+            font-family: 'IBM Plex Mono', monospace;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        ul {
+            margin: 1rem 0 1rem 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            .header { padding: 2rem 1rem; }
+            .content { padding: 1rem; }
+            .header h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Ghid de utilizare</h1>
+            <p>Launch Portal — Platforma ta de management aplicații</p>
+        </div>
+        
+        <div class="content">
+            <!-- Introducere -->
+            <div class="section">
+                <h2>🚀 Introducere</h2>
+                <p>Launch Portal este o platformă centralizată care îți organizează toate aplicațiile de business într-un singur loc. Accesezi rapid orice tool, gestionezi favorite și personalizezi workspace-ul după nevoile tale.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>📱 Aplicații</h4>
+                        <p>Organizează toate tool-urile tale în secțiuni personalizabile</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>⭐ Favorite</h4>
+                        <p>Link-uri rapide către resurse frecvent accesate</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🏢 Multi-companie</h4>
+                        <p>Workspace izolat per utilizator și companie</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔐 Securitate</h4>
+                        <p>Autentificare sigură și control acces granular</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login -->
+            <div class="section">
+                <h2>🔐 Autentificare</h2>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Accesează portal-ul</strong>
+                        Deschide <code>https://sbcportal.aiall.ro</code> în browser
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Introduce credențialele</strong>
+                        Username și parolă primite de la administrator
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Click "Intră în portal"</strong>
+                        Vei fi redirecționat către dashboard-ul tău personalizat
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Sfat:</strong>
+                    Salvează pagina în bookmark-uri pentru acces rapid. Portalul funcționează pe desktop și mobil.
+                </div>
+            </div>
+            
+            <!-- Tab Aplicații -->
+            <div class="section">
+                <h2>📱 Tab Aplicații</h2>
+                <p>Aici îți gestionezi toate aplicațiile de business. Ele sunt organizate în <strong>secțiuni</strong> pentru o navigare ușoară.</p>
+                
+                <h3>Adăugare secțiune nouă</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Click pe butonul [+ Secțiune]</strong>
+                        În partea de sus a tab-ului Aplicații
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Completează formularul</strong>
+                        • <strong>Nume:</strong> ex. "Financiar", "HR", "Vânzări"<br>
+                        • <strong>Culoare:</strong> alege din paletă<br>
+                        • <strong>Iconiță:</strong> selectează iconița potrivită
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Click "Creează"</strong>
+                        Secțiunea apare instant în sidebar
+                    </div>
+                </div>
+                
+                <h3>Adăugare aplicație</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Selectează secțiunea</strong>
+                        Click pe secțiunea unde vrei să adaugi app-ul
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Click [+ Aplicație]</strong>
+                        Butonul apare în zona de conținut
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Completează detaliile</strong>
+                        • <strong>Nume:</strong> ex. "Power BI", "Google Analytics"<br>
+                        • <strong>URL:</strong> link-ul complet (https://..., agentsaga://start pentru Procesator Extrase sau sagabulk://start pentru Bulk Editor)<br>
+                        • <strong>Descriere:</strong> scurtă prezentare (opțional)<br>
+                        • <strong>Utilizator:</strong> username pentru acces (opțional)<br>
+                        • <strong>Culoare:</strong> card background
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Exemplu practic:</strong>
+                    Pentru Power BI rapoarte:<br>
+                    <code>Nume: Raport Vânzări Q1</code><br>
+                    <code>URL: https://app.powerbi.com/groups/.../reports/...</code><br>
+                    <code>Utilizator: gheorghe@aiall.ro</code>
+                </div>
+                
+                <h3>Editare și organizare</h3>
+                <ul>
+                    <li><strong>Editare card:</strong> Click pe butonul ✏️ pe card</li>
+                    <li><strong>Ștergere card:</strong> Click pe 🗑️ (necesită confirmare)</li>
+                    <li><strong>Reordonare:</strong> Drag & drop cardurile în poziția dorită</li>
+                    <li><strong>Mutare între secțiuni:</strong> Editează card-ul și schimbă secțiunea</li>
+                </ul>
+            </div>
+            
+            <!-- Tab Favorite -->
+            <div class="section">
+                <h2>⭐ Tab Favorite</h2>
+                <p>Accesul rapid la resurse importante — link-uri, documente, pagini frecvent vizitate.</p>
+                
+                <h3>Adăugare favorite</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Creează secțiune</strong>
+                        Similar cu Aplicații, organizează favoritele în secțiuni (ex: "Documentație", "Clienți")
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Adaugă favorit</strong>
+                        • <strong>Label:</strong> nume scurt (ex: "Contract Selaiot")<br>
+                        • <strong>URL:</strong> link către resursă<br>
+                        • <strong>Culoare:</strong> pentru identificare vizuală
+                    </div>
+                </div>
+                
+                <div class="tip">
+                    <strong>💡 Cazuri de utilizare:</strong>
+                    • Link-uri Google Drive frecvent accesate<br>
+                    • Pagini SharePoint cu documente importante<br>
+                    • Formulare web sau dashboards externe<br>
+                    • Contact-uri clienți/furnizori
+                </div>
+            </div>
+            
+            <!-- Tab Admin (doar pentru admini) -->
+            <div class="section">
+                <h2>🏢 Tab Admin (doar administratori)</h2>
+                <p>Dacă ai rol de <strong>admin</strong>, ai acces la gestionarea utilizatorilor din compania ta.</p>
+                
+                <h3>Adăugare utilizator</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Click [+ Adaugă utilizator]</strong>
+                        Buton în partea de sus a tabelului
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Completează formularul</strong>
+                        • <strong>Username:</strong> unic global (ex: ion.aiall)<br>
+                        • <strong>Parolă:</strong> minim 8 caractere<br>
+                        • <strong>Rol:</strong> User sau Admin (max 2 admini/companie)<br>
+                        • <strong>CUI & Companie:</strong> auto-completate
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Click "Adaugă"</strong>
+                        User-ul primește acces instant la portal
+                    </div>
+                </div>
+                
+                <h3>Editare utilizator</h3>
+                <ul>
+                    <li>Click pe ✏️ lângă username</li>
+                    <li>Modifică rol (User ↔ Admin)</li>
+                    <li>Actualizează datele companiei (CUI, Nume)</li>
+                </ul>
+                
+                <div class="warning">
+                    <strong>⚠️ Atenție:</strong>
+                    • Nu te poți șterge pe tine însuți<br>
+                    • Nu poți șterge ultimul admin al companiei<br>
+                    • Username-ul este unic global și nu se poate modifica
+                </div>
+                
+                <h3>Super-Admin (primul utilizator)</h3>
+                <p>Primul admin (cel care a făcut setup-ul inițial) are privilegii speciale:</p>
+                <ul>
+                    <li>✅ Vede <strong>toți utilizatorii</strong> din toate companiile</li>
+                    <li>✅ Poate edita/șterge orice utilizator</li>
+                    <li>✅ Poate crea admini pentru orice companie</li>
+                    <li>✅ Subtitle afișează "Toate companiile (Super Admin)"</li>
+                </ul>
+            </div>
+            
+            <!-- Setări -->
+            <div class="section">
+                <h2>⚙️ Setări și personalizare</h2>
+                
+                <h3>Temă Dark/Light</h3>
+                <p>Click pe butonul <span class="icon">🌙</span>/<span class="icon">☀️</span> în header pentru a comuta între temă întunecată și luminoasă.</p>
+                
+                <h3>User Menu</h3>
+                <p>Click pe <strong>👤 Username</strong> în colțul dreapta-sus pentru:</p>
+                <ul>
+                    <li><strong>Setări:</strong> preferințe cont (în curând)</li>
+                    <li><strong>Deconectare:</strong> ieși din portal</li>
+                </ul>
+                
+                <h3>Taste rapide</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4><span class="kbd">Esc</span></h4>
+                        <p>Închide orice modal deschis</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">R</span></h4>
+                        <p>Refresh complet (clear cache)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Securitate -->
+            <div class="section">
+                <h2>🔒 Securitate și confidențialitate</h2>
+                
+                <h3>Izolare date</h3>
+                <ul>
+                    <li>✅ Fiecare utilizator vede <strong>doar propriile date</strong></li>
+                    <li>✅ Workspace-ul tău (secțiuni, apps, favorite) este complet privat</li>
+                    <li>✅ Adminii văd doar utilizatorii din compania lor</li>
+                    <li>✅ Nu există partajare cross-utilizatori (fără vizibilitate între conturi)</li>
+                </ul>
+                
+                <h3>Parolă și autentificare</h3>
+                <ul>
+                    <li>Parolele sunt criptate cu <strong>Argon2id</strong> (standard industry)</li>
+                    <li>Sesiunile expiră după <strong>7 zile</strong> de inactivitate</li>
+                    <li>Rate limiting: max 5 încercări eșuate / 15 minute per IP</li>
+                </ul>
+                
+                <div class="tip">
+                    <strong>💡 Best practices:</strong>
+                    • Folosește parolă puternică (minim 8 caractere, litere + cifre)<br>
+                    • Nu partaja credențialele cu alte persoane<br>
+                    • Deconectează-te când folosești computer partajat<br>
+                    • Verifică URL-ul: <code>https://sbcportal.aiall.ro</code>
+                </div>
+            </div>
+            
+            <!-- Suport -->
+            <div class="section">
+                <h2>🆘 Suport și asistență</h2>
+                
+                <h3>Probleme frecvente</h3>
+                
+                <div class="feature-card">
+                    <h4>Nu se încarcă aplicațiile</h4>
+                    <p><strong>Soluție:</strong> Refresh (Ctrl+Shift+R). Dacă persistă, contactează administratorul.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>Am uitat parola</h4>
+                    <p><strong>Soluție:</strong> Contactează administratorul companiei pentru reset parolă.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>Link-ul aplicației nu funcționează</h4>
+                    <p><strong>Soluție:</strong> Verifică URL-ul (https://..., agentsaga://start pentru Procesator Extrase sau sagabulk://start pentru Bulk Editor). Pentru aplicația locală, înregistrează protocolul corespunzător pe calculatorul de pe care deschizi portalul.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>Nu văd tab-ul Admin</h4>
+                    <p><strong>Soluție:</strong> Doar utilizatorii cu rol "admin" văd acest tab. Contactează administratorul pentru promovare.</p>
+                </div>
+                
+                <h3>Contact suport</h3>
+                <p>Pentru asistență tehnică sau întrebări:</p>
+                <ul>
+                    <li>📧 Email: <strong>gh.sandru@aiall.ro</strong></li>
+                    <li>🌐 Website: <strong>www.aiall.ro</strong></li>
+                    <li>🏢 Companie: <strong>AiALL S.R.L.</strong></li>
+                </ul>
+            </div>
+            
+            <!-- Footer -->
+            <div class="section" style="border-top: 2px solid #e2e8f0; padding-top: 2rem; margin-top: 3rem;">
+                <p style="text-align: center; color: #94a3b8; font-size: 14px;">
+                    Launch Portal v2.0 © 2024 AiALL S.R.L. | Toate drepturile rezervate
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

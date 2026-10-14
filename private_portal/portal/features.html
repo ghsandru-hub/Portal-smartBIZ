@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch Portal — Funcționalități și Beneficii</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: linear-gradient(135deg, #1F4788 0%, #2A5899 50%, #4A90B5 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2D8B8E 0%, #1F4788 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-description {
+            font-size: 16px;
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2D8B8E;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1F4788;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -6px rgba(45, 139, 142, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1F4788;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-description {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.7;
+        }
+        
+        .benefits-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .benefit {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #2D8B8E;
+        }
+        
+        .benefit-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2D8B8E 0%, #1F4788 100%);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .benefit-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .benefit-content p {
+            font-size: 15px;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .use-case {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .use-case::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2D8B8E 0%, #1F4788 100%);
+        }
+        
+        .use-case-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F4788;
+            margin-bottom: 1rem;
+        }
+        
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .use-case li {
+            padding: 0.5rem 0;
+            color: #475569;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .use-case li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #2D8B8E;
+            font-weight: bold;
+        }
+        
+        .cta {
+            background: linear-gradient(135deg, #2D8B8E 0%, #1F4788 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .cta h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .cta p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #1F4788;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        
+        .tech-badge {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #475569;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            .hero { padding: 2rem 1rem; }
+            .hero h1 { font-size: 32px; }
+            .section { padding: 1.5rem 1rem; }
+            .section-title { font-size: 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .use-cases { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <h1>🚀 Launch Portal</h1>
+            <div class="hero-subtitle">Centralizează. Organizează. Accelerează.</div>
+            <p class="hero-description">
+                Platforma ta de command center pentru toate aplicațiile de business. 
+                Un singur loc pentru Power BI, Google Analytics, SharePoint, CRM și orice alt tool folosești zilnic.
+            </p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Portal unificat</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Aplicații suportate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Personalizabil</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Acces disponibil</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="section">
+            <h2 class="section-title">✨ Funcționalități principale</h2>
+            
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Organizare aplicații</div>
+                    <div class="feature-description">
+                        Creează secțiuni personalizate (Financiar, HR, Vânzări) și adaugă aplicațiile tale de business. 
+                        Fiecare card conține link direct, descriere și username pentru acces rapid.
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-title">Favorite rapide</div>
+                    <div class="feature-description">
+                        Link-uri instant către documente Google Drive, pagini SharePoint, formulare web. 
+                        Organizate în secțiuni pentru acces în maxim 2 click-uri.
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-title">Personalizare completă</div>
+                    <div class="feature-description">
+                        Alege culori pentru fiecare secțiune și card, selectează iconițe potrivite, 
+                        reordonează drag & drop. Workspace-ul tău reflectă modul tău de lucru.
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🏢</div>
+                    <div class="feature-title">Multi-companie</div>
+                    <div class="feature-description">
+                        Fiecare utilizator are workspace izolat. Adminii gestionează userii din compania lor. 
+                        Perfect pentru firme de consultanță sau grupuri de companii.
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Securitate enterprise</div>
+                    <div class="feature-description">
+                        Criptare Argon2id pentru parole, sesiuni JWT securizate, rate limiting anti-bruteforce. 
+                        Datele tale sunt protejate la nivel enterprise.
+                    </div>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">🌓</div>
+                    <div class="feature-title">Dark/Light mode</div>
+                    <div class="feature-description">
+                        Comută instant între temă luminoasă și întunecată. Perfectă pentru lucru pe timp de noapte 
+                        sau în condiții de lumină diferite.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Benefits -->
+        <div class="section">
+            <h2 class="section-title">💎 Beneficii pentru business-ul tău</h2>
+            
+            <div class="benefits-list">
+                <div class="benefit">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-content">
+                        <h3>Crește productivitatea echipei cu 40%</h3>
+                        <p>
+                            Elimină timpul pierdut căutând link-uri prin email sau bookmarks. 
+                            Echipa ta accesează orice aplicație în maxim 2 click-uri, 
+                            concentrându-se pe munca reală, nu pe logistică digitală.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-content">
+                        <h3>Onboarding instant pentru angajați noi</h3>
+                        <p>
+                            Noii veniți primesc acces la toate tool-urile din prima zi. 
+                            Adminul creează contul, setează compania, și gata — 
+                            niciun timp pierdut cu configurări sau cereri de access.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🔒</div>
+                    <div class="benefit-content">
+                        <h3">Control granular asupra accesului</h3>
+                        <p>
+                            Fiecare user vede doar propriile aplicații. Adminii gestionează doar compania lor. 
+                            Super-adminul vede tot. Zero risc de acces nea utorizat la date sensibile.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">💰</div>
+                    <div class="benefit-content">
+                        <h3>Zero costuri de training</h3>
+                        <p>
+                            Interfața intuitivă elimină nevoia de training extensiv. 
+                            Ghidul integrat (butonul ❓) oferă instrucțiuni pas-cu-pas pentru orice întrebare.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">📊</div>
+                    <div class="benefit-content">
+                        <h3">Organizare clară a resurselor</h3>
+                        <p>
+                            Rapoarte financiare într-o secțiune, HR în alta, operațiuni în alta. 
+                            Fiecare departament își organizează tool-urile după logica proprie de lucru.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="benefit">
+                    <div class="benefit-icon">🌐</div>
+                    <div class="benefit-content">
+                        <h3>Acces de oriunde, oricând</h3>
+                        <p>
+                            Funcționează pe desktop, tablet și mobil. Echipa ta are acces la aplicații 
+                            fie că lucrează de acasă, din birou sau în deplasare.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Use Cases -->
+        <div class="section">
+            <h2 class="section-title">🎯 Cazuri de utilizare</h2>
+            
+            <div class="use-cases">
+                <div class="use-case">
+                    <div class="use-case-title">📊 Departament Financiar</div>
+                    <ul>
+                        <li>Rapoarte Power BI (Vânzări, Profit, Cash Flow)</li>
+                        <li>Google Sheets bugetare</li>
+                        <li>eFactura portal</li>
+                        <li>Banking online (vizualizare solduri)</li>
+                        <li>Documentație fiscală SharePoint</li>
+                    </ul>
+                </div>
+                
+                <div class="use-case">
+                    <div class="use-case-title">👥 Resurse Umane</div>
+                    <ul>
+                        <li>Pontaj colaboratori</li>
+                        <li>Documente contracte (Drive)</li>
+                        <li>Formular concedii</li>
+                        <li>Portal salarizare</li>
+                        <li>Training-uri obligatorii SSM</li>
+                    </ul>
+                </div>
+                
+                <div class="use-case">
+                    <div class="use-case-title">💼 Sales & Marketing</div>
+                    <ul>
+                        <li>CRM (HubSpot/Salesforce)</li>
+                        <li>Google Analytics dashboards</li>
+                        <li>Social media management tools</li>
+                        <li>Email marketing platform</li>
+                        <li>Pipeline Kanban board</li>
+                    </ul>
+                </div>
+                
+                <div class="use-case">
+                    <div class="use-case-title">⚙️ Operațiuni</div>
+                    <ul>
+                        <li>Sisteme ERP</li>
+                        <li>Inventory management</li>
+                        <li>Ticketing system (Jira/Trello)</li>
+                        <li>Supplier portals</li>
+                        <li>Quality control dashboards</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2 class="section-title">🛠️ Tehnologie modernă</h2>
+            <p style="text-align: center; color: #64748b; margin-bottom: 1rem;">
+                Construit pe un stack tehnologic robust și testat în producție
+            </p>
+            
+            <div class="tech-stack">
+                <div class="tech-badge">🔐 Argon2id Encryption</div>
+                <div class="tech-badge">🔑 JWT Sessions</div>
+                <div class="tech-badge">💾 SQLite Database</div>
+                <div class="tech-badge">⚡ Pure JavaScript</div>
+                <div class="tech-badge">🎨 Modern CSS</div>
+                <div class="tech-badge">🌐 HTTPS Secured</div>
+                <div class="tech-badge">📱 Mobile Responsive</div>
+                <div class="tech-badge">♿ WCAG Accessible</div>
+            </div>
+        </div>
+        
+        <!-- CTA -->
+        <div class="cta">
+            <h2>Gata să îți transformi workflow-ul?</h2>
+            <p>Începe să folosești Launch Portal astăzi și vezi diferența în productivitate.</p>
+            
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p style="font-size: 14px; opacity: 0.8; margin: 0;">
+                    Dezvoltat de <strong>AiALL S.R.L.</strong> | CUI: 48025522<br>
+                    Email: gh.sandru@aiall.ro | Web: www.aiall.ro
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

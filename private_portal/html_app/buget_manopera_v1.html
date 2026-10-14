@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ro" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>smartBIZ · Bugetare Agent Muncă</title>
+<style>
+  :root{
+    --teal:#2D8B8E; --navy:#1F4788; --navy2:#2A5899; --navy3:#4A90B5;
+    --amber:#d97706; --green:#16a34a; --red:#dc2626;
+  }
+  /* DARK (default) */
+  [data-theme="dark"]{
+    --bg:#0d1520; --panel:#13202e; --panel2:#1a2b3d; --line:#22364a;
+    --txt:#e8eef4; --muted:#8aa0b4; --bgGrad:radial-gradient(1200px 600px at 80% -10%,rgba(45,139,142,.12),transparent),#0d1520;
+    --headTxt:#fff; --headSub:#b9cbe0;
+  }
+  /* LIGHT */
+  [data-theme="light"]{
+    --bg:#f5f6f7; --panel:#ffffff; --panel2:#eef2f6; --line:#d8e0e8;
+    --txt:#1a2b3d; --muted:#5d7387; --bgGrad:radial-gradient(1200px 600px at 80% -10%,rgba(45,139,142,.10),transparent),#f5f6f7;
+    --headTxt:#fff; --headSub:#dce8f5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+    background:var(--bgGrad); color:var(--txt);
+    min-height:100vh; min-height:-webkit-fill-available; padding:0 0 60px;
+    transition:background .3s,color .3s;
+  }
+  header{
+    background:linear-gradient(120deg,var(--navy),var(--navy2));
+    padding:18px 28px;
+    padding-left:max(28px,env(safe-area-inset-left));
+    padding-right:max(28px,env(safe-area-inset-right));
+    padding-top:max(18px,env(safe-area-inset-top));
+    border-bottom:3px solid var(--teal);
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{font-size:22px;font-weight:700;letter-spacing:.5px;color:var(--headTxt)}
+  .logo .biz{color:var(--teal)}.logo .co{color:var(--amber)}
+  .infoBtn{
+    width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);
+    background:transparent;color:#fff;font-size:13px;font-weight:700;font-style:italic;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:Georgia,serif;
+  }
+  .infoBtn:hover{background:rgba(255,255,255,.15)}
+  .helpBtn{
+    width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(255,255,255,.4);
+    background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-weight:700;
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .helpBtn:hover{background:rgba(255,255,255,.2)}
+  .sub{font-size:12px;color:var(--headSub);margin-top:2px}
+  .ctrls{display:flex;gap:8px;align-items:center}
+  .toggle{
+    display:flex;background:rgba(255,255,255,.12);border-radius:8px;padding:3px;
+  }
+  .toggle button{
+    background:transparent;border:none;color:#cfe0f0;padding:6px 12px;border-radius:6px;
+    font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  .toggle button.on{background:var(--teal);color:#06210f}
+  .wrap{max-width:1500px;margin:24px auto;padding:0 20px;display:grid;grid-template-columns:1fr 2fr;gap:22px}
+  @media(max-width:1000px){.wrap{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .tabsRow{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:18px}
+  .tabs{display:flex;gap:0;flex-wrap:wrap}
+  .tab{padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent}
+  .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+  .chev{font-size:26px;color:var(--teal);cursor:pointer;user-select:none;padding:4px 10px;transition:transform .25s ease;line-height:1;font-weight:700}
+  .card.collapsed .chev{transform:rotate(-90deg)}
+  .card.collapsed .panels{display:none}
+  .card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--amber);margin:16px 0 8px;font-weight:600}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  input{
+    width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    padding:9px 11px;border-radius:8px;font-size:16px;font-family:inherit;
+    -webkit-appearance:none;appearance:none;
+  }
+  input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgba(45,139,142,.25)}
+  select{
+    width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    padding:9px 32px 9px 11px;border-radius:8px;font-size:16px;font-family:inherit;
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    background-image:linear-gradient(45deg,transparent 50%,var(--teal) 50%),linear-gradient(135deg,var(--teal) 50%,transparent 50%);
+    background-position:calc(100% - 16px) calc(50% - 2px),calc(100% - 11px) calc(50% - 2px);
+    background-size:5px 5px,5px 5px;
+    background-repeat:no-repeat;
+  }
+  select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgba(45,139,142,.25)}
+  input.ro{opacity:.7;cursor:not-allowed;border-style:dashed}
+  .lblpin{display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .pin{background:none;border:none;cursor:pointer;font-size:13px;opacity:.3;filter:grayscale(1);padding:0 2px;line-height:1}
+  .pin:hover{opacity:.6}
+  .pin.on{opacity:1;filter:none}
+  input.pinned{border-color:var(--teal);box-shadow:0 0 0 2px rgba(45,139,142,.3);background:rgba(45,139,142,.08)}
+  .prow{align-items:end}
+  .prow>div{display:flex;flex-direction:column}
+  .prow input{height:42px}
+  .pn{
+    background:var(--panel2);border:1px solid var(--line);border-left-width:3px;border-radius:8px;
+    padding:9px 11px;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;
+    white-space:nowrap;display:flex;align-items:center;min-height:42px;height:42px;
+  }
+  .pn.ang{border-left-color:var(--navy3)}
+  .pn.pfa{border-left-color:var(--teal)}
+  .pn.mic{border-left-color:var(--amber)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .scTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 6px}
+  .scTab{
+    background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;cursor:pointer;text-align:left;font-family:inherit;
+    display:flex;flex-direction:column;gap:2px;transition:.15s;
+  }
+  .scTab b{font-size:12px;color:var(--txt);font-weight:700}
+  .scTab span{font-size:10px;color:var(--muted);line-height:1.3}
+  .scTab:hover{border-color:var(--teal)}
+  .scTab.on{border-color:var(--teal);background:rgba(45,139,142,.12);box-shadow:0 0 0 1px var(--teal)}
+  .scTab.on b{color:var(--teal)}
+  @media(max-width:520px){.scTabs{grid-template-columns:1fr}}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end}
+  .row4>div{display:flex;flex-direction:column}
+  .row4>div>label{flex:0 0 auto}
+  .row4 label,.row3 label{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row4 input{padding:9px 7px}
+  @media(max-width:380px){.row4{grid-template-columns:1fr 1fr}}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr}}
+  .src{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .src .top{padding:14px 16px;font-weight:700;font-size:15px;color:#fff;display:flex;justify-content:space-between;align-items:center}
+  .src.ang .top{background:linear-gradient(120deg,var(--navy),var(--navy2))}
+  .src.pfa .top{background:linear-gradient(120deg,#0f6b6e,var(--teal))}
+  .src.mic .top{background:linear-gradient(120deg,#a85d05,var(--amber))}
+  .src .body{padding:14px 16px;display:flex;flex-direction:column;flex:1}
+  .li{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--line);gap:10px}
+  .li span:first-child{color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .li .v{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;text-align:right;flex-shrink:0}
+  .li.tot{border-bottom:none;margin-top:6px;padding-top:10px;border-top:2px solid var(--line);font-size:14px}
+  .li.tot span:first-child{white-space:normal}
+  .li.tot .v{font-size:16px}
+  .pos{color:var(--green)} .neg{color:var(--red)}
+  .badge{font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.18)}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+  .kbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .kbox .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);line-height:1.3}
+  .kbox .n{font-size:18px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  .note{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:14px;padding:12px;background:var(--panel2);border-radius:8px;border-left:3px solid var(--teal)}
+  .winner{outline:2px solid var(--green);outline-offset:-2px}
+  .hide{display:none}
+  .small{font-size:11px;color:var(--muted)}
+  .li.be{background:rgba(45,139,142,.10);margin:auto 0 0;padding:8px 12px;border-bottom:none;border-radius:6px}
+  .li.be span:first-child{color:var(--teal);font-weight:600;white-space:normal}
+  .li.be .v{font-size:15px}
+  /* ===== OVERLAY + MODALE ===== */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex}
+
+  /* modal standard (info) */
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:440px;width:100%;padding:22px;position:relative}
+  .modal h2{font-size:16px;color:var(--teal);margin-bottom:6px}
+  .modal .appname{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:12px}
+  .modal p{font-size:13px;line-height:1.6;color:var(--txt);margin-bottom:12px}
+  .modal .fxrow{background:var(--panel2);border-radius:8px;padding:12px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .modal .closeX{position:absolute;top:14px;right:16px;font-size:20px;color:var(--muted);cursor:pointer;background:none;border:none;z-index:3}
+
+  /* modal lat redimensionabil (manual) — specificitate 2 clase ca să bată .modal */
+  .modal.modalWide{
+    max-width:94vw; width:min(900px,94vw);
+    height:min(80vh,820px); max-height:92vh;
+    min-width:320px; min-height:300px;
+    overflow:auto; resize:both;
+  }
+  .modal.modalWide .closeX{position:sticky;float:right;top:0;background:var(--panel);border-radius:6px}
+  @media(max-width:760px){
+    #helpOverlay{padding:0}
+    .modal.modalWide{
+      width:100vw; max-width:100vw;
+      height:100dvh; max-height:100dvh;
+      border-radius:0; resize:none; padding:18px;
+    }
+  }
+
+  /* conținut manual */
+  .manual h2{font-size:18px}
+  .manual h3{font-size:14px;color:var(--teal);margin:18px 0 8px;font-weight:700}
+  .manual h4{font-size:13px;color:var(--amber);margin:14px 0 6px;font-weight:600}
+  .manual p{font-size:13px;line-height:1.6;color:var(--txt);margin-bottom:10px}
+  .manual ul{margin:0 0 10px 18px}
+  .manual li{font-size:13px;line-height:1.6;color:var(--txt);margin-bottom:5px}
+  .manual .scenario{background:var(--panel2);border-radius:8px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--teal)}
+  .manual .scenario b{color:var(--teal)}
+  .manual code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--amber)}
+  .manScTabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+  .manScTab{
+    background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+    padding:7px 14px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--muted);
+  }
+  .manScTab:hover{border-color:var(--teal)}
+  .manScTab.on{border-color:var(--teal);background:rgba(45,139,142,.12);color:var(--teal)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div>
+      <div class="logo"><span>smart</span><span class="biz">BIZ</span> <span class="co">Copilot</span>
+        <button class="infoBtn" id="infoBtn" title="Info">i</button>
+      </div>
+      <div class="sub" data-i18n="subtitle">Bugetare Agent Muncă</div>
+    </div>
+  </div>
+  <div class="ctrls">
+    <button class="helpBtn" id="helpBtn" title="Manual">?</button>
+    <div class="toggle" id="langToggle">
+      <button data-lang="ro" class="on">RO</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <div class="toggle" id="themeToggle">
+      <button data-theme-set="dark" class="on">🌙</button>
+      <button data-theme-set="light">☀️</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ===== PANOU PARAMETRI ===== -->
+  <div class="card" id="paramCard">
+    <div class="tabsRow">
+      <div class="tabs">
+        <div class="tab active" data-t="glob" data-i18n="tabGlobal">Global</div>
+        <div class="tab" data-t="ang" data-i18n="tabEmployee">Angajat</div>
+        <div class="tab" data-t="pfa" data-i18n="tabPfa">PFA</div>
+        <div class="tab" data-t="mic" data-i18n="tabMicro">Micro</div>
+      </div>
+      <span class="chev" id="paramChev" title="Colaps">▾</span>
+    </div>
+    <div class="panels">
+      <!-- GLOBAL -->
+      <div data-p="glob">
+        <div class="row4">
+          <div><label data-i18n="displayCcy">Monedă afișare</label>
+            <select id="ccy">
+              <option value="EUR">EUR €</option>
+              <option value="RON">RON</option>
+              <option value="USD">USD $</option>
+            </select>
+          </div>
+          <div><label data-i18n="fxEur">Curs EUR/RON</label><input id="fx" type="number" step="0.01" value="5.10"></div>
+          <div><label data-i18n="fxUsd">Curs USD/RON</label><input id="fxUsd" type="number" step="0.01" value="4.60"></div>
+          <div><label data-i18n="hpd">Ore/zi</label><input id="hpd" type="number" step="0.5" value="8"></div>
+        </div>
+        <div class="scTabs">
+          <button class="scTab" data-sc="1" data-anchors="profit,net"><b data-i18n="sc1">Scenariul 1</b><span data-i18n="sc1d">Profit + Cost net → Preț, CAP</span></button>
+          <button class="scTab" data-sc="2" data-anchors="cap,net"><b data-i18n="sc2">Scenariul 2</b><span data-i18n="sc2d">Preț/CAP + Cost net → Profit</span></button>
+          <button class="scTab" data-sc="3" data-anchors="price,profit"><b data-i18n="sc3">Scenariul 3</b><span data-i18n="sc3d">Preț + Profit → Cost net</span></button>
+        </div>
+        <div class="row3">
+          <div><label class="lblpin"><span id="priceLbl" data-i18n="price">Preț oră</span><button class="pin" data-pin="price" title="Fixează">📌</button></label><input id="price" type="number" step="1" value="40"></div>
+          <div><label class="lblpin"><span data-i18n="cap">CAP (%)</span><button class="pin" data-pin="cap" title="Fixează">📌</button></label><input id="cap" type="number" step="1"></div>
+          <div><label class="lblpin"><span id="profitFixLbl" data-i18n="profitFix">Profit fix/lună</span><button class="pin" data-pin="profit" title="Fixează">📌</button></label><input id="profitFix" type="number" step="100"></div>
+        </div>
+        <div class="row4 prow">
+          <div><label class="lblpin"><span id="netTargetLbl" data-i18n="netTarget">Cost net țintă</span><button class="pin" data-pin="net" title="Fixează">📌</button></label><input id="netGlobal" type="number" value="2500"></div>
+          <div><label data-i18n="profitAng">Profit Angajat</label><div class="pn ang" id="pAng">—</div></div>
+          <div><label data-i18n="profitPfa">Profit PFA</label><div class="pn pfa" id="pPfa">—</div></div>
+          <div><label data-i18n="profitMic">Profit Micro</label><div class="pn mic" id="pMic">—</div></div>
+        </div>
+        <h3 data-i18n="capacity">Capacitate (zile 2026)</h3>
+        <div class="row2">
+          <div><label data-i18n="baseDays">Zile lucr. bază</label><input id="baseDays" type="number" value="252"></div>
+          <div><label data-i18n="holid">Sărbători (în zi lucr.)</label><input id="holid" type="number" value="9"></div>
+        </div>
+        <div class="note" data-i18n="noteGlobal">252 zile = 365 − 104 weekend − 9 sărbători legale (2026). PFA poate lucra și în sărbători.</div>
+      </div>
+
+      <!-- ANGAJAT -->
+      <div data-p="ang" class="hide">
+        <h3 data-i18n="contribRo">Salariu net & contribuții RO 2026</h3>
+        <div class="row4">
+          <div><label id="netSalLbl" data-i18n="netSal">Net lunar</label><input id="netSal" type="number" value="2500" readonly class="ro"></div>
+          <div><label>CAS</label><input id="cas" type="number" step="0.1" value="25"></div>
+          <div><label>CASS</label><input id="cass" type="number" step="0.1" value="10"></div>
+          <div><label data-i18n="incomeTax">Impozit</label><input id="impv" type="number" step="0.1" value="10"></div>
+        </div>
+        <h3 data-i18n="nonprodDays">CAM & zile neproductive / an</h3>
+        <div class="row4">
+          <div><label data-i18n="cam">CAM</label><input id="cam" type="number" step="0.01" value="2.25"></div>
+          <div><label data-i18n="co">CO</label><input id="co" type="number" value="21"></div>
+          <div><label data-i18n="cm">CM</label><input id="cm" type="number" value="5"></div>
+          <div><label data-i18n="otherDays">Alte libere</label><input id="extra" type="number" value="1"></div>
+        </div>
+        <h3 data-i18n="adminContract">Administrare contract</h3>
+        <div class="row2">
+          <div><label id="fixCostLbl" data-i18n="fixCost">Cost fix anual</label><input id="admFix" type="number" value="600"></div>
+          <div><label data-i18n="pctSal">% din cost salarial</label><input id="admPct" type="number" step="0.5" value="3"></div>
+        </div>
+      </div>
+
+      <!-- PFA -->
+      <div data-p="pfa" class="hide">
+        <h3 data-i18n="pfaRegime">Regim: SISTEM REAL (IT nu are normă de venit)</h3>
+        <div class="row4">
+          <div><label id="pfaNetLbl" data-i18n="pfaNet">Net</label><input id="pfaNet" type="number" value="2500" readonly class="ro"></div>
+          <div><label data-i18n="pfaH">Ore max/an</label><input id="pfaH" type="number" value="1000"></div>
+          <div><label data-i18n="incomeTaxPct">Impozit %</label><input id="pfaImp" type="number" step="0.1" value="10"></div>
+          <div><label data-i18n="minWage">Sal. min RON</label><input id="salMin" type="number" value="4050"></div>
+        </div>
+        <div class="row3">
+          <div><label data-i18n="casBase">CAS (%)</label><input id="pfaCas" type="number" step="0.1" value="25"></div>
+          <div><label data-i18n="cassBase">CASS (%)</label><input id="pfaCass" type="number" step="0.1" value="10"></div>
+          <div><label id="pfaAdmLbl" data-i18n="adminAgent">Admin/an</label><input id="pfaAdm" type="number" value="300"></div>
+        </div>
+        <div class="note" data-i18n="notePfa">Sistem real: impozit 10% pe venitul net efectiv facturat; CAS/CASS pe plafonul de 24 salarii minime. Netul și taxele se atribuie proporțional cu gradul de ocupare (restul orelor PFA le acoperă din alți clienți). Activitățile IT/software nu au normă de venit în nomenclatorul DGRFP.</div>
+      </div>
+
+      <!-- MICRO -->
+      <div data-p="mic" class="hide">
+        <h3 data-i18n="micSalary">Persoane, venit net & salariu</h3>
+        <div class="row4">
+          <div><label data-i18n="micEmp">Angajați</label><input id="micEmp" type="number" value="1"></div>
+          <div><label id="micNetLbl" data-i18n="micNet">Net</label><input id="micNet" type="number" value="2500" readonly class="ro"></div>
+          <div><label data-i18n="grossSal">Sal. brut RON</label><input id="micSalBrut" type="number" value="4500"></div>
+          <div><label data-i18n="minWageLegal">Sal. min RON</label><input id="salMinMic" type="number" value="4050"></div>
+        </div>
+        <h3 data-i18n="dividends">Dividende, impozit micro & administrare</h3>
+        <div class="row4">
+          <div><label data-i18n="divTax">Imp. div %</label><input id="micDiv" type="number" step="0.1" value="16"></div>
+          <div><label data-i18n="cassDiv">CASS div %</label><input id="micCassDiv" type="number" step="0.1" value="10"></div>
+          <div><label data-i18n="microTax">Imp. micro %</label><input id="micTax" type="number" step="0.1" value="1"></div>
+          <div><label id="micAdmLbl" data-i18n="adminYear">Admin/an</label><input id="micAdm" type="number" value="300"></div>
+        </div>
+        <div class="note" data-i18n="noteMicro">Venitul net se compune din salariu minim net + dividende net. Costul de achiziție = cifra de afaceri pe care micro trebuie s-o factureze pentru a acoperi: salariu+taxe salariale, impozit micro 1% pe CA, impozit dividende 16% și CASS 10% pe 24×salariu minim (dacă dividendele depășesc pragul). Capacitate = nr. angajați × zile productive (ca la angajat propriu).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REZULTATE ===== -->
+  <div>
+    <div class="kpi">
+      <div class="kbox"><div class="l" data-i18n="kpiCost">Cost salarial angajator/an</div><div class="n" id="kAngCost">—</div></div>
+      <div class="kbox"><div class="l" data-i18n="kpiRev">Venit anual (1800h vândute)</div><div class="n" id="kRev">—</div></div>
+      <div class="kbox"><div class="l" data-i18n="kpiFx">Curs aplicat</div><div class="n" id="kFx">5.10</div></div>
+    </div>
+
+    <div class="grid3">
+      <div class="src ang" id="cardAng">
+        <div class="top"><span data-i18n="cardEmployee">Angajat (CIM)</span> <span class="badge" id="angBadge">—</span></div>
+        <div class="body" id="angBody"></div>
+      </div>
+      <div class="src pfa" id="cardPfa">
+        <div class="top"><span data-i18n="cardPfa">PFA contractor</span> <span class="badge" id="pfaBadge">—</span></div>
+        <div class="body" id="pfaBody"></div>
+      </div>
+      <div class="src mic" id="cardMic">
+        <div class="top"><span data-i18n="cardMicro">Microîntreprindere</span> <span class="badge" id="micBadge">—</span></div>
+        <div class="body" id="micBody"></div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:20px" data-i18n="logicNote"><b>Logica bugetării anuale:</b> costurile indirecte (administrare contract, overhead) și cele neproductive (CO, CM) se distribuie pe orele efectiv vândabile. Marja netă = venit − cost total sursă. „Cost real / oră vândută" = costul total al sursei împărțit la orele vândabile — indicatorul cheie de comparație.</div>
+  </div>
+</div>
+
+<!-- ===== MODAL INFO ===== -->
+<div class="overlay" id="infoOverlay">
+  <div class="modal">
+    <button class="closeX" id="closeInfo">×</button>
+    <h2 data-i18n="modalTitle">Capacitate de producție manoperă calificată</h2>
+    <div class="appname">smartBIZ Copilot · <span data-i18n="subtitle">Bugetare Agent Muncă</span></div>
+    <p data-i18n="modalDesc">Aplicație de bugetare anuală pentru un agent care vinde ore de manoperă calificată de dezvoltare software. Compară trei surse de capacitate — angajat propriu, contractor PFA și microîntreprindere — calculând costul real pe oră, pragul de rentabilitate și marja netă, plecând de la un venit net țintă identic per persoană.</p>
+    <div class="fxrow">
+      <span data-i18n="fxLabel">Curs valutar aplicat</span>
+      <b><span id="modalFx">5.10</span> RON / EUR</b>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL MANUAL ===== -->
+<div class="overlay" id="helpOverlay">
+  <div class="modal modalWide">
+    <button class="closeX" id="closeHelp">×</button>
+    <div class="manual" id="manualBody"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ron=v=>v.toLocaleString('ro-RO',{maximumFractionDigits:0});
+// moneda de afișare aleasă + cursuri (în RON). Valorile interne sunt în EUR.
+let CCY='EUR', FX_EUR=5.10, FX_USD=4.60;
+const CCY_SYM={EUR:'€',RON:' RON',USD:'$'};
+// converteste o valoare EUR in moneda aleasa si o formateaza (pt costuri)
+function eur(vEur){
+  let v=vEur, sym=CCY_SYM[CCY];
+  if(CCY==='RON'){ v=vEur*FX_EUR; }
+  else if(CCY==='USD'){ v=vEur*FX_EUR/FX_USD; } // EUR->RON->USD
+  const num=v.toLocaleString('ro-RO',{maximumFractionDigits:0});
+  return CCY==='RON' ? num+sym : sym+num;
+}
+// valori legate de pret (venit, pret/ora, break-even, marja/ora, tarif/ora) — MEREU in USD
+function usd(vEur){
+  const v=vEur*FX_EUR/FX_USD; // EUR->RON->USD
+  return '$'+v.toLocaleString('ro-RO',{maximumFractionDigits:0});
+}
+// varianta cu zecimale pt valori mici (pret/ora, break-even/ora)
+function usd2(vEur){
+  const v=vEur*FX_EUR/FX_USD;
+  return '$'+v.toLocaleString('ro-RO',{maximumFractionDigits:1});
+}
+const h0=v=>v.toLocaleString('ro-RO',{maximumFractionDigits:0});
+
+// ===== I18N =====
+const I18N={
+  ro:{
+    subtitle:'Bugetare Agent Muncă',
+    tabGlobal:'Global',tabEmployee:'Angajat',tabPfa:'PFA',tabMicro:'Micro',
+    fx:'Curs EUR/RON',price:'Preț oră',hpd:'Ore/zi',
+    displayCcy:'Monedă afișare',fxEur:'Curs EUR/RON',fxUsd:'Curs USD/RON',
+    sc1:'Scenariul 1',sc1d:'Profit + Cost net → Preț, CAP',
+    sc2:'Scenariul 2',sc2d:'Preț/CAP + Cost net → Profit',
+    sc3:'Scenariul 3',sc3d:'Preț + Profit → Cost net',
+    cap:'CAP (%)',profitFix:'Profit fix/lună',
+    netTarget:'Cost net țintă',
+    profitAng:'Profit Angajat',profitPfa:'Profit PFA',profitMic:'Profit Micro',
+    capacity:'Capacitate (zile 2026)',baseDays:'Zile lucr. bază',holid:'Sărbători (în zi lucr.)',
+    noteGlobal:'252 zile = 365 − 104 weekend − 9 sărbători legale (2026). PFA poate lucra și în sărbători.',
+    netSal:'Net lunar',contribRo:'Salariu net & contribuții RO 2026',
+    incomeTax:'Impozit',cam:'CAM',nonprodDays:'CAM & zile neproductive / an',
+    co:'CO',cm:'CM',otherDays:'Alte libere',adminContract:'Administrare contract',
+    fixCost:'Cost fix anual',pctSal:'% din cost salarial',
+    pfaNet:'Net',pfaH:'Ore max/an',
+    pfaRegime:'Regim: SISTEM REAL (IT nu are normă de venit)',incomeTaxPct:'Impozit %',
+    minWage:'Sal. min RON',casBase:'CAS (%)',cassBase:'CASS (%)',
+    adminAgent:'Admin/an',
+    notePfa:'Sistem real: impozit 10% pe venitul net efectiv facturat; CAS/CASS pe plafonul de 24 salarii minime. Netul și taxele se atribuie proporțional cu gradul de ocupare (restul orelor PFA le acoperă din alți clienți). Activitățile IT/software nu au normă de venit în nomenclatorul DGRFP.',
+    micEmp:'Angajați',micNet:'Net',
+    micSalary:'Persoane, venit net & salariu',grossSal:'Sal. brut RON',minWageLegal:'Sal. min RON',
+    dividends:'Dividende, impozit micro & administrare',divTax:'Imp. div %',cassDiv:'CASS div %',
+    microTaxAdmin:'Impozit micro & administrare',microTax:'Imp. micro %',adminYear:'Admin/an',
+    noteMicro:'Venitul net se compune din salariu minim net + dividende net. Costul de achiziție = cifra de afaceri pe care micro trebuie s-o factureze pentru a acoperi: salariu+taxe salariale, impozit micro 1% pe CA, impozit dividende 16% și CASS 10% pe 24×salariu minim (dacă dividendele depășesc pragul). Capacitate = nr. angajați × zile productive (ca la angajat propriu).',
+    kpiCost:'Cost salarial angajator/an',kpiRev:'Venit anual (1800h vândute)',kpiFx:'Curs aplicat',
+    cardEmployee:'Angajat (CIM)',cardPfa:'PFA contractor',cardMicro:'Microîntreprindere',
+    logicNote:'<b>Logica bugetării anuale:</b> costurile indirecte (administrare contract, overhead) și cele neproductive (CO, CM) se distribuie pe orele efectiv vândabile. Marja netă = venit − cost total sursă. „Cost real / oră vândută" = costul total al sursei împărțit la orele vândabile — indicatorul cheie de comparație.',
+    modalTitle:'Capacitate de producție manoperă calificată',
+    modalDesc:'Aplicație de bugetare anuală pentru un agent care vinde ore de manoperă calificată de dezvoltare software. Compară trei surse de capacitate — angajat propriu, contractor PFA și microîntreprindere — calculând costul real pe oră, pragul de rentabilitate și marja netă, plecând de la un venit net țintă identic per persoană.',
+    fxLabel:'Curs valutar aplicat',
+    manTitle:'Manual de utilizare',
+    manIntro:`
+      <p>Aplicația compară trei moduri de a obține ore de manoperă (Angajat, PFA, Microîntreprindere) și reconciliază patru mărimi legate între ele prin pictograma 📌 (pin) de lângă fiecare câmp.</p>
+      <h3>Cele 4 mărimi reconciliabile</h3>
+      <ul>
+        <li><b>Cost net țintă</b> — netul lunar „în mână" al persoanei.</li>
+        <li><b>Preț oră</b> — tariful facturat clientului (mereu în USD).</li>
+        <li><b>CAP</b> — adaosul comercial procentual peste cost.</li>
+        <li><b>Profit fix/lună</b> — marja netă lunară a angajatului (×12 = marja anuală).</li>
+      </ul>
+      <h3>Cum funcționează pinul (blocarea)</h3>
+      <p>Fixezi <b>două</b> din cele patru mărimi cu 📌. Acestea rămân constante, iar celelalte două se recalculează automat. Câmpul fixat e evidențiat cu contur teal. Când dai pin pe o mărime nouă, cea mai veche din pereche se eliberează.</p>`,
+    manScTab1:'Scenariul 1',manScTab2:'Scenariul 2',manScTab3:'Scenariul 3',
+    manSc1:`
+      <div class="scenario">
+        <p><b>Scenariul 1 — fixezi Profit fix + Cost net</b></p>
+        <p>Pleci de la cât vrei să câștige angajatul și de la netul lui. Aplicația calculează <b>Prețul/oră</b> și <b>CAP</b> necesare.</p>
+        <p style="color:var(--muted)">Răspunde la întrebarea: „Ce tarif să cer ca să scot profitul dorit?"</p>
+      </div>`,
+    manSc2:`
+      <div class="scenario">
+        <p><b>Scenariul 2 — fixezi CAP (sau Preț) + Cost net</b></p>
+        <p>Pleci de la adaosul comercial (sau tariful) și netul angajatului. Aplicația calculează <b>Marja netă/lună</b> rezultată.</p>
+        <p style="color:var(--muted)">Răspunde la întrebarea: „La adaosul/tariful ăsta, cât profit iese?"</p>
+      </div>`,
+    manSc3:`
+      <div class="scenario">
+        <p><b>Scenariul 3 — fixezi Preț + Profit fix</b></p>
+        <p>Pleci de la tariful pieței și profitul dorit. Aplicația calculează prin <b>reverse</b> <b>Costul net țintă</b> (cât îți permiți să plătești net angajatului) și CAP-ul.</p>
+        <p style="color:var(--muted)">Răspunde la întrebarea: „Cu tariful ăsta și profitul ăsta, ce salariu net pot susține?"</p>
+      </div>`,
+    manRest:`
+      <h3>Parametri independenți</h3>
+      <p>Restul câmpurilor (contribuții, ore/zi, zile lucrătoare, CO/CM, cursuri valutare, taxe PFA/micro) <b>nu</b> se reconciliază — sunt date de intrare care ajustează rezultatul în oricare scenariu. Când le modifici, cele două mărimi ne-fixate se recalculează păstrând ancorele.</p>
+      <h3>Monede</h3>
+      <ul>
+        <li>Costurile și profitul — în moneda selectată sus (<code>EUR / RON / USD</code>).</li>
+        <li>Prețul/oră și veniturile — <b>mereu în USD</b> (clientul e din SUA).</li>
+        <li>Salariile brute/minime — în RON (valori legale românești).</li>
+      </ul>
+      <h3>Cardurile de rezultate</h3>
+      <p>Cele trei carduri (Angajat, PFA, Micro) arată defalcarea costurilor, pragul de rentabilitate (break-even/oră) și marja netă anuală. Cardul cu cea mai bună marjă pe oră e evidențiat cu contur verde.</p>`,
+    // randuri rezultate
+    rSalNet:'Salariu net/lună',rSalBrut:'Salariu brut/lună',rCostLun:'Cost angajator/lună',
+    rCostSalAn:'Cost salarial/an',rAdmin:'Administrare',rZileProd:'Zile productive',
+    rOre:'Ore vândabile',rVenit:'Venit',rCostH:'Cost real/oră',
+    rBreakeven:'Break-even/oră',rMarja:'Marjă netă anuală',
+    rNetPlin:'Net plin',rGrad:'Grad ocupare',rNetLun:'Net efectiv/lună',rNetAn:'Net efectiv/an',
+    rVenitImp:'Venit impozabil',rImp10:'Impozit 10%',rCAS:'CAS',
+    rCASS:'CASS',rCostMan:'Cost achiziție',rOrePlaf:'Ore vândabile',
+    rMarjaH:'Marjă/oră',rAngMic:'Angajați',rSalBrutL:'Salariu brut/lună',rSalNetL:'Salariu net/lună',
+    rNetDiv:'Net dividende/lună',rCostSal:'Cost salarial/an',rDivBrut:'Dividend brut/an',
+    rImpDiv:'Impozit dividende',rCASSDiv:'CASS dividende',rImpMic:'Impozit micro 1%',
+    rCA:'Cifră afaceri',rTarif:'Tarif intern/oră'
+  },
+  en:{
+    subtitle:'Labor Agent Budgeting',
+    tabGlobal:'Global',tabEmployee:'Employee',tabPfa:'Freelancer',tabMicro:'Micro-co.',
+    fx:'EUR/RON rate',price:'Hour price',hpd:'Hours/day',
+    displayCcy:'Display currency',fxEur:'EUR/RON rate',fxUsd:'USD/RON rate',
+    sc1:'Scenario 1',sc1d:'Profit + Net cost → Price, CAP',
+    sc2:'Scenario 2',sc2d:'Price/CAP + Net cost → Profit',
+    sc3:'Scenario 3',sc3d:'Price + Profit → Net cost',
+    cap:'Markup (CAP) %',profitFix:'Fixed profit/month',
+    netTarget:'Target net cost',
+    profitAng:'Profit Employee',profitPfa:'Profit Freelancer',profitMic:'Profit Micro',
+    capacity:'Capacity (2026 days)',baseDays:'Base working days',holid:'Holidays (workday)',
+    noteGlobal:'252 days = 365 − 104 weekend − 9 legal holidays (2026). A freelancer may work on holidays too.',
+    netSal:'Net monthly',contribRo:'Net salary & RO 2026 contributions',
+    incomeTax:'Income tax',cam:'Work ins. (CAM)',nonprodDays:'Work ins. (CAM) & non-productive days / year',
+    co:'Leave (CO)',cm:'Sick (CM)',otherDays:'Other off',adminContract:'Contract administration',
+    fixCost:'Fixed annual cost',pctSal:'% of salary cost',
+    pfaNet:'Net',pfaH:'Max h/year',
+    pfaRegime:'Regime: REAL SYSTEM (IT has no income norm)',incomeTaxPct:'Tax %',
+    minWage:'Min wage RON',casBase:'Pension (CAS) %',cassBase:'Health (CASS) %',
+    adminAgent:'Admin/year',
+    notePfa:'Real system: 10% tax on actual net invoiced income; pension/health on the cap of 24 minimum wages. Net and taxes are allocated proportionally to the occupancy rate (the freelancer covers the rest from other clients). IT/software activities have no income norm in the tax authority nomenclature.',
+    micEmp:'Employees',micNet:'Net',
+    micSalary:'People, net income & salary',grossSal:'Gross sal. RON',minWageLegal:'Min wage RON',
+    dividends:'Dividends, micro tax & administration',divTax:'Div. tax %',cassDiv:'Health (CASS) div %',
+    microTaxAdmin:'Micro tax & administration',microTax:'Micro tax %',adminYear:'Admin/yr',
+    noteMicro:'Net income = minimum net salary + net dividends. Acquisition cost = the turnover the micro-company must invoice to cover: salary+payroll taxes, 1% micro tax on turnover, 16% dividend tax and 10% health on 24×minimum wage (if dividends exceed the threshold). Capacity = employees × productive days (as for an own employee).',
+    kpiCost:'Employer salary cost/year',kpiRev:'Annual revenue (1800h sold)',kpiFx:'Applied rate',
+    cardEmployee:'Employee (contract)',cardPfa:'Freelancer (PFA)',cardMicro:'Micro-company',
+    logicNote:'<b>Annual budgeting logic:</b> indirect costs (contract admin, overhead) and non-productive ones (leave, sick days) are spread over the actually sellable hours. Net margin = revenue − total source cost. "Real cost / sold hour" = total source cost divided by sellable hours — the key comparison metric.',
+    modalTitle:'Skilled Labor Production Capacity',
+    modalDesc:'An annual budgeting tool for an agent who sells hours of skilled software-development labor. It compares three capacity sources — own employee, freelancer (PFA) and micro-company — computing the real cost per hour, the break-even price and the net margin, all starting from an identical target net income per person.',
+    fxLabel:'Applied exchange rate',
+    manTitle:'User manual',
+    manIntro:`
+      <p>The app compares three ways to obtain labor hours (Employee, Freelancer/PFA, Micro-company) and reconciles four interlinked figures via the 📌 (pin) icon next to each field.</p>
+      <h3>The 4 reconcilable figures</h3>
+      <ul>
+        <li><b>Target net cost</b> — the person's monthly take-home net.</li>
+        <li><b>Hour price</b> — the rate billed to the client (always in USD).</li>
+        <li><b>CAP</b> — the percentage commercial markup over cost.</li>
+        <li><b>Fixed profit/month</b> — the employee's monthly net margin (×12 = annual margin).</li>
+      </ul>
+      <h3>How pinning (locking) works</h3>
+      <p>You fix <b>two</b> of the four figures with 📌. They stay constant while the other two recalculate automatically. The pinned field is highlighted with a teal border. Pinning a new figure releases the oldest one in the pair.</p>`,
+    manScTab1:'Scenario 1',manScTab2:'Scenario 2',manScTab3:'Scenario 3',
+    manSc1:`
+      <div class="scenario">
+        <p><b>Scenario 1 — fix Fixed profit + Target net</b></p>
+        <p>Start from how much the employee should earn and their net. The app computes the required <b>Hour price</b> and <b>CAP</b>.</p>
+        <p style="color:var(--muted)">Answers: "What rate must I charge to make the profit I want?"</p>
+      </div>`,
+    manSc2:`
+      <div class="scenario">
+        <p><b>Scenario 2 — fix CAP (or Price) + Target net</b></p>
+        <p>Start from the markup (or rate) and the employee's net. The app computes the resulting <b>Net margin/month</b>.</p>
+        <p style="color:var(--muted)">Answers: "At this markup/rate, what profit comes out?"</p>
+      </div>`,
+    manSc3:`
+      <div class="scenario">
+        <p><b>Scenario 3 — fix Price + Fixed profit</b></p>
+        <p>Start from the market rate and desired profit. The app <b>reverse-computes</b> the <b>Target net cost</b> (the net salary you can afford) and the CAP.</p>
+        <p style="color:var(--muted)">Answers: "With this rate and profit, what net salary can I sustain?"</p>
+      </div>`,
+    manRest:`
+      <h3>Independent parameters</h3>
+      <p>The other fields (contributions, hours/day, working days, leave/sick, exchange rates, PFA/micro taxes) are <b>not</b> reconciled — they are inputs that adjust the result in any scenario. When you change them, the two non-pinned figures recalculate while keeping the anchors fixed.</p>
+      <h3>Currencies</h3>
+      <ul>
+        <li>Costs and profit — in the currency selected at the top (<code>EUR / RON / USD</code>).</li>
+        <li>Hour price and revenues — <b>always in USD</b> (the client is US-based).</li>
+        <li>Gross/minimum wages — in RON (Romanian legal values).</li>
+      </ul>
+      <h3>Result cards</h3>
+      <p>The three cards (Employee, Freelancer, Micro) show the cost breakdown, the break-even price per hour and the annual net margin. The card with the best margin per hour is highlighted with a green border.</p>`,
+    rSalNet:'Net salary/month',rSalBrut:'Gross salary/month',rCostLun:'Employer cost/month',
+    rCostSalAn:'Salary cost/year',rAdmin:'Administration',rZileProd:'Productive days',
+    rOre:'Sellable hours',rVenit:'Revenue',rCostH:'Real cost/hour',
+    rBreakeven:'Break-even/hour',rMarja:'Annual net margin',
+    rNetPlin:'Full net',rGrad:'Occupancy rate',rNetLun:'Effective net/month',rNetAn:'Effective net/year',
+    rVenitImp:'Taxable income',rImp10:'10% tax',rCAS:'Pension (CAS)',
+    rCASS:'Health (CASS)',rCostMan:'Acquisition cost',rOrePlaf:'Sellable hours',
+    rMarjaH:'Margin/hour',rAngMic:'Employees',rSalBrutL:'Gross salary/month',rSalNetL:'Net salary/month',
+    rNetDiv:'Net dividends/month',rCostSal:'Salary cost/year',rDivBrut:'Gross dividend/year',
+    rImpDiv:'Dividend tax',rCASSDiv:'Dividend health (CASS)',rImpMic:'Micro tax 1%',
+    rCA:'Turnover (CA)',rTarif:'Internal rate/hour'
+  }
+};
+let LANG='ro';
+function t(k){return (I18N[LANG][k]!==undefined?I18N[LANG][k]:k);}
+
+// scenariul activ în manual (1/2/3)
+let manScActive=1;
+function renderManual(){
+  const sc=manScActive;
+  $('manualBody').innerHTML=`
+    <h2 style="color:var(--teal);margin-bottom:4px">${t('manTitle')}</h2>
+    <p style="color:var(--muted);font-size:12px;margin-bottom:14px">smartBIZ Copilot · ${t('subtitle')}</p>
+    ${t('manIntro')}
+    <h3>${LANG==='ro'?'Cele 3 scenarii':'The 3 scenarios'}</h3>
+    <div class="manScTabs">
+      <button class="manScTab${sc===1?' on':''}" data-msc="1">${t('manScTab1')}</button>
+      <button class="manScTab${sc===2?' on':''}" data-msc="2">${t('manScTab2')}</button>
+      <button class="manScTab${sc===3?' on':''}" data-msc="3">${t('manScTab3')}</button>
+    </div>
+    <div id="manScBody">${t('manSc'+sc)}</div>
+    ${t('manRest')}`;
+  // handler taburi scenarii din manual
+  $('manualBody').querySelectorAll('.manScTab').forEach(b=>b.onclick=()=>{
+    manScActive=+b.dataset.msc;
+    renderManual();
+  });
+}
+
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.innerHTML=t(el.dataset.i18n);
+  });
+  // dacă manualul e deschis, reîncarcă-l în noua limbă (păstrând scenariul activ)
+  if($('helpOverlay').classList.contains('show')) renderManual();
+  calc();
+}
+
+// lang toggle
+document.querySelectorAll('#langToggle button').forEach(b=>b.onclick=()=>{
+  LANG=b.dataset.lang;
+  document.querySelectorAll('#langToggle button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  applyLang();
+});
+// theme toggle
+document.querySelectorAll('#themeToggle button').forEach(b=>b.onclick=()=>{
+  document.documentElement.setAttribute('data-theme',b.dataset.themeSet);
+  document.querySelectorAll('#themeToggle button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+});
+// info modal
+$('infoBtn').onclick=()=>$('infoOverlay').classList.add('show');
+$('closeInfo').onclick=()=>$('infoOverlay').classList.remove('show');
+$('infoOverlay').onclick=e=>{if(e.target===$('infoOverlay'))$('infoOverlay').classList.remove('show');};
+// modal manual
+$('helpBtn').onclick=()=>{ renderManual(); $('helpOverlay').classList.add('show'); };
+$('closeHelp').onclick=()=>$('helpOverlay').classList.remove('show');
+// închide doar dacă atât mousedown cât și mouseup s-au produs pe overlay (nu la resize/drag din modal)
+let helpDownOnOverlay=false;
+$('helpOverlay').addEventListener('mousedown',e=>{ helpDownOnOverlay=(e.target===$('helpOverlay')); });
+$('helpOverlay').addEventListener('mouseup',e=>{
+  if(helpDownOnOverlay && e.target===$('helpOverlay')) $('helpOverlay').classList.remove('show');
+  helpDownOnOverlay=false;
+});
+
+// chevron colaps (pe linia taburilor; ascunde doar .panels)
+$('paramChev').onclick=()=>$('paramCard').classList.toggle('collapsed');
+
+// tabs
+document.querySelectorAll('.tab').forEach(tb=>tb.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  tb.classList.add('active');
+  document.querySelectorAll('[data-p]').forEach(p=>p.classList.add('hide'));
+  document.querySelector('[data-p="'+tb.dataset.t+'"]').classList.remove('hide');
+});
+
+const ids=['fx','fxUsd','hpd','netGlobal','baseDays','holid','cas','cass','impv','cam','co','cm','extra','admFix','admPct','pfaH','pfaImp','salMin','pfaCas','pfaCass','pfaAdm','micEmp','micSalBrut','salMinMic','micDiv','micCassDiv','micTax','micAdm'];
+ids.forEach(id=>$(id).addEventListener('input',()=>{ lastEdited='price'; calc(); }));
+$('ccy').addEventListener('change',()=>{ lastEdited='price'; calc(); });
+
+// costul/oră maxim dintre cele 3 surse (actualizat la finalul calc)
+let costMax=0;
+// baza angajat pt profit fix
+let cheapestCost=0, cheapestHours=1;
+
+// === RECONCILIERE: 2 ancore fixate din {net, price, cap, profit} ===
+// Câmpul de afară (net/price/cap/profit) — restul se derivă.
+// Scenarii: {profit,net}->price,cap | {cap|price,net}->profit | {price,profit}->net,cap
+let anchors=['net','price']; // implicit: net + preț fixate, restul derivat
+
+const ID={net:'netGlobal',price:'price',cap:'cap',profit:'profitFix'};
+
+function refreshPinUI(){
+  document.querySelectorAll('.pin').forEach(x=>x.classList.toggle('on',anchors.includes(x.dataset.pin)));
+  Object.keys(ID).forEach(k=>$(ID[k]).classList.toggle('pinned',anchors.includes(k)));
+  // marchează tabul de scenariu care corespunde perechii curente de ancore
+  const cur=[...anchors].sort().join(',');
+  document.querySelectorAll('.scTab').forEach(tab=>{
+    const sc=tab.dataset.sc;
+    let match=false;
+    if(sc==='1') match=(cur==='net,profit');
+    else if(sc==='2') match=(cur==='cap,net'||cur==='net,price'); // ambele variante
+    else if(sc==='3') match=(cur==='price,profit');
+    tab.classList.toggle('on',match);
+  });
+}
+
+// taburi scenarii: setează direct perechea de ancore
+document.querySelectorAll('.scTab').forEach(tab=>tab.onclick=()=>{
+  anchors=tab.dataset.anchors.split(',');
+  refreshPinUI();
+  calc();
+});
+
+// helper conversie moneda aleasa -> EUR (invers fata de afisare)
+function toEur(vCcy){
+  if(CCY==='RON') return vCcy/FX_EUR;
+  if(CCY==='USD') return vCcy*FX_USD/FX_EUR;
+  return vCcy;
+}
+// helper EUR -> USD (prețul în input e în USD)
+function eurToUsd(vEur){ return vEur*FX_EUR/FX_USD; }
+
+// editarea unui câmp îl promovează la ancoră (înlocuind cea mai veche)
+function promote(field){
+  if(!anchors.includes(field)){
+    anchors=[anchors[1],field]; // păstrează ultimele 2
+    refreshPinUI();
+  }
+}
+$('price').addEventListener('input',()=>{ promote('price'); calc(); });
+$('cap').addEventListener('input',()=>{ promote('cap'); calc(); });
+$('profitFix').addEventListener('input',()=>{ promote('profit'); calc(); });
+$('netGlobal').addEventListener('input',()=>{ promote('net'); calc(); });
+
+// click pe pin: fixează acel câmp ca ancoră (înlocuind cea mai veche)
+document.querySelectorAll('.pin').forEach(b=>b.onclick=()=>{
+  const f=b.dataset.pin;
+  if(anchors.includes(f)) return; // deja ancoră
+  anchors=[anchors[1],f];
+  refreshPinUI();
+  calc();
+});
+
+function val(id){return parseFloat($(id).value)||0;}
+
+function calc(){
+  // moneda de afișare + cursuri globale
+  CCY=$('ccy').value;
+  FX_EUR=val('fx')||5.10;
+  FX_USD=val('fxUsd')||4.60;
+
+  const hpd=val('hpd'), baseDays=val('baseDays');
+  $('modalFx').textContent=FX_EUR.toFixed(2); $('kFx').textContent=FX_EUR.toFixed(2);
+
+  // parametri salariali angajat
+  const cas=val('cas')/100, cass=val('cass')/100, impv=val('impv')/100, cam=val('cam')/100;
+  const factor=(1-cas-cass)*(1-impv);
+  const admFix=toEur(val('admFix')), admPct=val('admPct')/100;
+  const zileProdAng=baseDays-val('co')-val('cm')-val('extra');
+  const hAng=zileProdAng*hpd;
+
+  // cost total angajator (anual) din netul lunar (EUR) și invers
+  function costFromNet(netLunar){
+    const brut=netLunar/factor;
+    const costSal=brut*(1+cam)*12;
+    return costSal*(1+admPct)+admFix;        // costAngTotal
+  }
+  function netFromCost(costTot){
+    const costSal=(costTot-admFix)/(1+admPct);
+    const brut=costSal/12/(1+cam);
+    return brut*factor;                       // net lunar
+  }
+
+  // === RECONCILIERE celor 4 variabile (pe ANGAJAT) ===
+  // valori curente în EUR (price & profit & net) — net & profit în moneda aleasă, price în USD
+  let netEur=toEur(val('netGlobal'));         // cost net țintă lunar (EUR)
+  let priceEur=val('price')*FX_USD/FX_EUR;    // preț/oră (EUR)
+  let capV=val('cap');                        // %
+  let marginEur=toEur(val('profitFix'));      // marjă netă lunară (EUR)
+
+  const A=anchors;
+  const has=(x)=>A.includes(x);
+
+  // Scenariul 3: {price, profit} fixate -> derivă net (reverse din cost) și cap
+  if(has('price') && has('profit')){
+    const costTot=hAng*priceEur-marginEur*12; // cost = venit anual - marjă anuală
+    netEur=netFromCost(costTot);
+    const cph=costTot/hAng;
+    capV=(priceEur/cph-1)*100;
+  }
+  // Scenariul 1: {profit, net} fixate -> derivă price și cap
+  else if(has('profit') && has('net')){
+    const costTot=costFromNet(netEur);
+    priceEur=(marginEur*12+costTot)/hAng;
+    const cph=costTot/hAng;
+    capV=(priceEur/cph-1)*100;
+  }
+  // Scenariul 2a: {cap, net} fixate -> derivă price și profit
+  else if(has('cap') && has('net')){
+    const costTot=costFromNet(netEur);
+    const cph=costTot/hAng;
+    priceEur=cph*(1+capV/100);
+    marginEur=(hAng*priceEur-costTot)/12;
+  }
+  // Scenariul 2b: {price, net} fixate -> derivă cap și profit
+  else if(has('price') && has('net')){
+    const costTot=costFromNet(netEur);
+    const cph=costTot/hAng;
+    capV=(priceEur/cph-1)*100;
+    marginEur=(hAng*priceEur-costTot)/12;
+  }
+  // {price, cap} fixate -> derivă profit (net rămâne ce e) 
+  else if(has('price') && has('cap')){
+    const costTot=costFromNet(netEur);
+    const cph=costTot/hAng;
+    priceEur=cph*(1+capV/100); // cap fix => price urmează costul
+    marginEur=(hAng*priceEur-costTot)/12;
+  }
+  // {cap, profit} fixate -> derivă price, net(reverse)
+  else if(has('cap') && has('profit')){
+    // price/cph=1+cap, margin=(h*price-cost)/12, cost depinde de net... rezolvăm:
+    // cph=cost/h, price=cph(1+cap) => margin=(h*cph(1+cap)-cost)/12=(cost(1+cap)-cost)/12=cost*cap/(12*100... )
+    // margin*12 = cost*(cap/100) => cost = margin*12/(cap/100)
+    const costTot=(capV!==0)? (marginEur*12)/(capV/100) : costFromNet(netEur);
+    netEur=netFromCost(costTot);
+    const cph=costTot/hAng;
+    priceEur=cph*(1+capV/100);
+  }
+
+  // scrie înapoi valorile derivate (cele ne-ancorate)
+  if(!has('net'))    $('netGlobal').value=Math.round((CCY==='RON')?netEur*FX_EUR:(CCY==='USD')?netEur*FX_EUR/FX_USD:netEur);
+  if(!has('price'))  $('price').value=Math.round(eurToUsd(priceEur));
+  if(!has('cap'))    $('cap').value=capV.toFixed(1);
+  if(!has('profit')) $('profitFix').value=Math.round((CCY==='RON')?marginEur*FX_EUR:(CCY==='USD')?marginEur*FX_EUR/FX_USD:marginEur);
+
+  // propaga netul (EUR) in campurile read-only din taburi (in moneda aleasa pt afisare input)
+  const netDisp=Math.round((CCY==='RON')?netEur*FX_EUR:(CCY==='USD')?netEur*FX_EUR/FX_USD:netEur);
+  $('netSal').value=netDisp; $('pfaNet').value=netDisp; $('micNet').value=netDisp;
+
+  // valorile finale folosite în restul calculului
+  const price=priceEur, net=netEur;
+  const fx=FX_EUR;
+  // variabile angajat derivate din netul reconciliat
+  const brut=net/factor;
+  const costAngajatorLunar=brut*(1+cam);
+  const costSalAnual=costAngajatorLunar*12;
+  const admAng=admFix+costSalAnual*admPct;
+  const costAngTotal=costSalAnual+admAng;
+  const revAng=hAng*price;
+  const marjaAngExact=revAng-costAngTotal;
+  // profit lunar rotunjit (EUR) — sursa unică de adevăr; marja anuală = lunar×12
+  const profitAngLunarEur=Math.round(marjaAngExact/12);
+  const marjaAng=profitAngLunarEur*12;
+  const costPerHAng=costAngTotal/hAng;
+
+  // valoarea profitului fix în moneda afișată (întreg) — pt consistență marjă=×12
+  let pfShown=profitAngLunarEur;
+  if(CCY==='RON') pfShown=profitAngLunarEur*FX_EUR;
+  else if(CCY==='USD') pfShown=profitAngLunarEur*FX_EUR/FX_USD;
+  pfShown=Math.round(pfShown);
+  const marjaAngShown=pfShown*12; // în moneda afișată
+  const marjaAngSym=(CCY==='RON')?(marjaAngShown.toLocaleString('ro-RO')+' RON'):((CCY==='USD'?'$':'€')+marjaAngShown.toLocaleString('ro-RO'));
+
+  $('kAngCost').textContent=eur(costAngTotal);
+  $('kRev').textContent=usd(revAng);
+  $('angBadge').textContent=h0(hAng)+' h';
+  $('angBody').innerHTML=`
+    <div class="li"><span>${t('rSalNet')}</span><span class="v">${eur(net)}</span></div>
+    <div class="li"><span>${t('rSalBrut')}</span><span class="v">${eur(brut)}</span></div>
+    <div class="li"><span>${t('rCostLun')}</span><span class="v">${eur(costAngajatorLunar)}</span></div>
+    <div class="li"><span>${t('rCostSalAn')}</span><span class="v">${eur(costSalAnual)}</span></div>
+    <div class="li"><span>${t('rAdmin')}</span><span class="v">${eur(admAng)}</span></div>
+    <div class="li"><span>${t('rZileProd')}</span><span class="v">${h0(zileProdAng)}</span></div>
+    <div class="li"><span>${t('rOre')}</span><span class="v">${h0(hAng)} h</span></div>
+    <div class="li"><span>${t('rVenit')}</span><span class="v pos">${usd(revAng)}</span></div>
+    <div class="li"><span>${t('rCostH')}</span><span class="v">${usd2(costPerHAng)}</span></div>
+    <div class="li be"><span>${t('rBreakeven')}</span><span class="v ${price>=costPerHAng?'pos':'neg'}">${usd2(costPerHAng)}</span></div>
+    <div class="li tot"><span>${t('rMarja')}</span><span class="v ${marjaAng>=0?'pos':'neg'}">${marjaAngSym}</span></div>`;
+
+  // ---- PFA (SISTEM REAL) ----
+  const pfaNet=val('pfaNet'), pfaH=val('pfaH'), pfaAdm=toEur(val('pfaAdm'));
+  const salMin=val('salMin');
+  const pfaImpR=val('pfaImp')/100, pfaCasR=val('pfaCas')/100, pfaCassR=val('pfaCass')/100;
+  const capacitatePlina=hAng;
+  const grad=pfaH/capacitatePlina;
+  const netLunarEf=pfaNet*grad;
+  const netAnualPfa=netLunarEf*12;
+  const bazaP=24*salMin;
+  const casPfa=bazaP*pfaCasR*grad, cassPfa=bazaP*pfaCassR*grad;
+  const contribFixeEUR=(casPfa+cassPfa)/fx;
+  const V=(netAnualPfa+contribFixeEUR)/(1-pfaImpR);
+  const impPfa=V*pfaImpR;
+  const costManoperaPfa=V;
+  const costPfa=costManoperaPfa+pfaAdm;
+  const revPfa=pfaH*price;
+  const marjaPfa=revPfa-costPfa;
+  const costPerHPfa=costPfa/pfaH;
+
+  $('pfaBadge').textContent=h0(pfaH)+' h';
+  $('pfaBody').innerHTML=`
+    <div class="li"><span>${t('rNetPlin')}</span><span class="v">${eur(pfaNet)}/${LANG==='ro'?'lună':'mo'}</span></div>
+    <div class="li"><span>${t('rGrad')} (${h0(pfaH)}/${h0(capacitatePlina)}h)</span><span class="v">${(grad*100).toFixed(0)}%</span></div>
+    <div class="li"><span>${t('rNetLun')}</span><span class="v">${eur(netLunarEf)}</span></div>
+    <div class="li"><span>${t('rNetAn')}</span><span class="v">${eur(netAnualPfa)}</span></div>
+    <div class="li"><span>${t('rVenitImp')}</span><span class="v">${eur(V)}</span></div>
+    <div class="li"><span>${t('rImp10')}</span><span class="v">${eur(impPfa)}</span></div>
+    <div class="li"><span>${t('rCAS')}</span><span class="v">${ron(casPfa)} RON · ${eur(casPfa/fx)}</span></div>
+    <div class="li"><span>${t('rCASS')}</span><span class="v">${ron(cassPfa)} RON · ${eur(cassPfa/fx)}</span></div>
+    <div class="li"><span>${t('rCostMan')}</span><span class="v">${eur(costManoperaPfa)}</span></div>
+    <div class="li"><span>${t('rAdmin')}</span><span class="v">${eur(pfaAdm)}</span></div>
+    <div class="li"><span>${t('rOrePlaf')}</span><span class="v">${h0(pfaH)} h</span></div>
+    <div class="li"><span>${t('rVenit')}</span><span class="v pos">${usd(revPfa)}</span></div>
+    <div class="li"><span>${t('rCostH')}</span><span class="v">${usd2(costPerHPfa)}</span></div>
+    <div class="li"><span class="small">${t('rMarjaH')}</span><span class="v small">${usd2(price-costPerHPfa)}</span></div>
+    <div class="li be"><span>${t('rBreakeven')}</span><span class="v ${price>=costPerHPfa?'pos':'neg'}">${usd2(costPerHPfa)}</span></div>
+    <div class="li tot"><span>${t('rMarja')}</span><span class="v ${marjaPfa>=0?'pos':'neg'}">${eur(marjaPfa)}</span></div>`;
+
+  // ---- MICRO (salariu minim + dividende) ----
+  const micEmp=val('micEmp'), micNet=val('micNet'), micAdm=toEur(val('micAdm'));
+  const micSalBrut=val('micSalBrut'), salMinMic=val('salMinMic');
+  const micDivR=val('micDiv')/100, micCassDivR=val('micCassDiv')/100, micTaxR=val('micTax')/100;
+  const zileProdMic=baseDays-val('co')-val('cm')-val('extra');
+  const hMic=zileProdMic*hpd*micEmp;
+  const salFactor=(1-cas-cass)*(1-impv);
+  const salNetRON=micSalBrut*salFactor;
+  const salNetEUR=salNetRON/fx;
+  const costSalLunarRON=micSalBrut*(1+cam);
+  const netDivEUR=Math.max(0,micNet-salNetEUR);
+  const netDivAnEUR=netDivEUR*12;
+  const cassDivAnRON=24*salMinMic*micCassDivR;
+  const cassDivAnEUR=cassDivAnRON/fx;
+  const divBrutAnEUR=(netDivAnEUR+cassDivAnEUR)/(1-micDivR);
+  const impDivAnEUR=divBrutAnEUR*micDivR;
+  const costSalAnEUR=(costSalLunarRON/fx)*12;
+  const caPerPers=(costSalAnEUR+divBrutAnEUR)/(1-micTaxR);
+  const impMicroPerPers=caPerPers*micTaxR;
+  const caTotal=caPerPers*micEmp;
+  const costMic=caTotal+micAdm;
+  const revMic=hMic*price;
+  const marjaMic=revMic-costMic;
+  const costPerHMic=costMic/hMic;
+  const mo=LANG==='ro'?'lună':'mo';
+
+  $('micBadge').textContent=h0(hMic)+' h';
+  $('micBody').innerHTML=`
+    <div class="li"><span>${t('rAngMic')}</span><span class="v">${micEmp}</span></div>
+    <div class="li"><span>${t('rOre')}</span><span class="v">${h0(hMic)} h</span></div>
+    <div class="li"><span>${t('rSalBrutL')}</span><span class="v">${ron(micSalBrut)} RON</span></div>
+    <div class="li"><span>${t('rSalNetL')}</span><span class="v">${ron(salNetRON)} RON · ${eur(salNetEUR)}</span></div>
+    <div class="li"><span>${t('rNetDiv')}</span><span class="v">${eur(netDivEUR)}</span></div>
+    <div class="li"><span>${t('rCostSal')} (×${micEmp})</span><span class="v">${eur(costSalAnEUR*micEmp)}</span></div>
+    <div class="li"><span>${t('rDivBrut')} (×${micEmp})</span><span class="v">${eur(divBrutAnEUR*micEmp)}</span></div>
+    <div class="li"><span>${t('rImpDiv')} (×${micEmp})</span><span class="v">${eur(impDivAnEUR*micEmp)}</span></div>
+    <div class="li"><span>${t('rCASSDiv')} (×${micEmp})</span><span class="v">${eur(cassDivAnEUR*micEmp)}</span></div>
+    <div class="li"><span>${t('rImpMic')}</span><span class="v">${eur(impMicroPerPers*micEmp)}</span></div>
+    <div class="li"><span>${t('rCA')}</span><span class="v">${eur(caTotal)}</span></div>
+    <div class="li"><span>${t('rTarif')} (CA ÷ ${h0(hMic)}h)</span><span class="v">${usd2(caTotal/hMic)}</span></div>
+    <div class="li"><span>${t('rAdmin')}</span><span class="v">${eur(micAdm)}</span></div>
+    <div class="li"><span>${t('rVenit')}</span><span class="v pos">${usd(revMic)}</span></div>
+    <div class="li"><span>${t('rCostH')}</span><span class="v">${usd2(costPerHMic)}</span></div>
+    <div class="li"><span class="small">${t('rMarjaH')}</span><span class="v small">${usd2(price-costPerHMic)}</span></div>
+    <div class="li be"><span>${t('rBreakeven')}</span><span class="v ${price>=costPerHMic?'pos':'neg'}">${usd2(costPerHMic)}</span></div>
+    <div class="li tot"><span>${t('rMarja')}</span><span class="v ${marjaMic>=0?'pos':'neg'}">${eur(marjaMic)}</span></div>`;
+
+  // winner
+  const marginPerH=[
+    {el:'cardAng',m:price-costPerHAng},
+    {el:'cardPfa',m:price-costPerHPfa},
+    {el:'cardMic',m:price-costPerHMic}
+  ];
+  document.querySelectorAll('.src').forEach(s=>s.classList.remove('winner'));
+  const best=marginPerH.reduce((a,b)=>b.m>a.m?b:a);
+  $(best.el).classList.add('winner');
+
+  // cost/oră maxim dintre cele 3 surse + baza angajat (pt referințe)
+  costMax=Math.max(costPerHAng,costPerHPfa,costPerHMic);
+  cheapestCost=costAngTotal; cheapestHours=hAng;
+
+  // sufixe monedă pe etichete: cost & profit în moneda aleasă; preț mereu USD
+  $('profitFixLbl').textContent=t('profitFix')+' ('+CCY+')';
+  $('netTargetLbl').textContent=t('netTarget')+' ('+CCY+')';
+  $('priceLbl').textContent=t('price')+' (USD)';
+  // sufixe pe câmpurile de cost din taburi (moneda aleasă)
+  $('netSalLbl').textContent=t('netSal')+' ('+CCY+')';
+  $('pfaNetLbl').textContent=t('pfaNet')+' ('+CCY+')';
+  $('micNetLbl').textContent=t('micNet')+' ('+CCY+')';
+  $('fixCostLbl').textContent=t('fixCost')+' ('+CCY+')';
+  $('pfaAdmLbl').textContent=t('adminAgent')+' ('+CCY+')';
+  $('micAdmLbl').textContent=t('adminYear')+' ('+CCY+')';
+
+  // profit net (marjă anuală) per formă, pe randul global
+  $('pAng').textContent=marjaAngSym; $('pAng').className='pn ang '+(marjaAng>=0?'pos':'neg');
+  $('pPfa').textContent=eur(marjaPfa); $('pPfa').className='pn pfa '+(marjaPfa>=0?'pos':'neg');
+  $('pMic').textContent=eur(marjaMic); $('pMic').className='pn mic '+(marjaMic>=0?'pos':'neg');
+}
+applyLang();
+refreshPinUI();
+</script>
+</body>
+</html>
