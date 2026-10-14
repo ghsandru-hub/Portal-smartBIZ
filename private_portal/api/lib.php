@@ -114,7 +114,17 @@ function db_init_schema($pdo) {
         CREATE INDEX idx_favorites_user ON favorites(user_id, position);
         CREATE INDEX idx_favorites_section ON favorites(section_id, position);
         CREATE INDEX idx_users_company ON users(company_cui);
-        PRAGMA user_version = 2;
+        CREATE TABLE questionnaire_responses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            code TEXT NOT NULL,
+            answers TEXT NOT NULL DEFAULT '{}',
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            UNIQUE (user_id, code),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+        PRAGMA user_version = 3;
     ");
 }
 
@@ -158,6 +168,22 @@ function db_migrate($pdo) {
         // Create index for company_cui
         $pdo->exec("CREATE INDEX IF NOT EXISTS idx_users_company ON users(company_cui)");
         $pdo->exec('PRAGMA user_version = 2');
+    }
+    if ($version < 3) {
+        // Raspunsurile chestionarelor din html_app, un rand per utilizator si cod de chestionar
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS questionnaire_responses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                code TEXT NOT NULL,
+                answers TEXT NOT NULL DEFAULT '{}',
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                UNIQUE (user_id, code),
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        ");
+        $pdo->exec('PRAGMA user_version = 3');
     }
 }
 

@@ -353,6 +353,63 @@ function route_favorites($method, $id) {
     json_error('Method not allowed', 405);
 }
 
+// ---------- Questionnaires (html_app) ----------
+
+function validate_questionnaire_answers($answers) {
+    if (!is_array($answers)) return null;
+    $clean = [];
+    foreach ($answers as $qid => $item) {
+        if (!is_string($qid) || !preg_match('/^[A-Z][A-Za-z0-9.]{0,11}$/', $qid)) return null;
+        if (!is_array($item)) return null;
+        $row = [];
+        if (array_key_exists('a', $item)) {
+            if (!in_array($item['a'], ['da', 'partial', 'nu', 'na'], true)) return null;
+            $row['a'] = $item['a'];
+        }
+        if (array_key_exists('n', $item)) {
+            if (!is_string($item['n']) || mb_strlen($item['n']) > 300) return null;
+            if ($item['n'] !== '') $row['n'] = $item['n'];
+        }
+        if ($row) $clean[$qid] = $row;
+    }
+    return $clean;
+}
+
+function route_questionnaire($method, $code) {
+    $user = require_auth();
+
+    if ($method === 'GET') {
+        $stmt = db()->prepare('SELECT answers, updated_at FROM questionnaire_responses WHERE user_id = ? AND code = ?');
+        $stmt->execute([$user['id'], $code]);
+        $row = $stmt->fetch();
+        $answers = $row ? json_decode($row['answers'], true) : null;
+        json_response([
+            'code' => $code,
+            'answers' => (object)(is_array($answers) ? $answers : []),
+            'updated_at' => $row ? (int)$row['updated_at'] : null,
+        ]);
+    }
+
+    if ($method === 'PUT') {
+        $body = read_json_body();
+        $answers = validate_questionnaire_answers($body['answers'] ?? null);
+        if ($answers === null) json_error('Raspunsuri invalide', 400);
+        $json = json_encode((object)$answers, JSON_UNESCAPED_UNICODE);
+        if (strlen($json) > 65536) json_error('Raspunsuri prea mari', 413);
+
+        $now = time();
+        $stmt = db()->prepare('UPDATE questionnaire_responses SET answers = ?, updated_at = ? WHERE user_id = ? AND code = ?');
+        $stmt->execute([$json, $now, $user['id'], $code]);
+        if ($stmt->rowCount() === 0) {
+            $stmt = db()->prepare('INSERT INTO questionnaire_responses (user_id, code, answers, created_at, updated_at) VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([$user['id'], $code, $json, $now, $now]);
+        }
+        json_response(['ok' => true, 'updated_at' => $now]);
+    }
+
+    json_error('Method not allowed', 405);
+}
+
 // ---------- Admin ----------
 
 function route_admin_users() {

@@ -9,6 +9,7 @@
  * Servește fișierele HTML private DOAR utilizatorilor logați.
  *
  * Lansare din portal: https://sbcportal.aiall.ro/app.php?f=buget
+ *                      https://sbcportal.aiall.ro/app.php?f=chestionar
  */
 
 require_once dirname(dirname(__FILE__)) . '/private_portal/api/lib.php';
@@ -30,6 +31,7 @@ if (!$user) {
 $apps = [
     'buget'      => 'buget_manopera_v1.html',
     'certificat' => 'smartbiz_certificat_licenta.html',
+    'chestionar' => 'chestionar-cae-rm-01.html',
     // 'dashboard'  => 'Dashboard_Recurenta_vs_Goluri.html',
 ];
 
