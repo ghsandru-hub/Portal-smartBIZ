@@ -1,0 +1,14 @@
+---
+# Update only: rewrite application files in place, keep the production data and config.
+# Never copies portal.db, config.php or graph_config.php (they are not in the repository).
+deployment:
+  tasks:
+    - |
+      set -e
+      test -d /home/aiallro/private_portal/api
+      test -f /home/aiallro/private_portal/api/config.php
+      test -d /home/aiallro/sbcportal.aiall.ro
+      /bin/cp -R private_portal/api/. /home/aiallro/private_portal/api/
+      /bin/cp -R private_portal/portal/. /home/aiallro/private_portal/portal/
+      /bin/cp -R private_portal/html_app/. /home/aiallro/private_portal/html_app/
+      /bin/cp -R sbcportal.aiall.ro/. /home/aiallro/sbcportal.aiall.ro/
