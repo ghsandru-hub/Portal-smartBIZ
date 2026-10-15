@@ -354,6 +354,8 @@ function route_favorites($method, $id) {
 }
 
 // ---------- Questionnaires (html_app) ----------
+// Completari multiple per chestionar. Sunt comune utilizatorilor aceleiasi firme (company_cui);
+// un utilizator fara firma vede doar completarile proprii. Fiecare completare retine autorul si ultimul editor.
 
 function validate_questionnaire_answers($answers) {
     if (!is_array($answers)) return null;
@@ -375,36 +377,122 @@ function validate_questionnaire_answers($answers) {
     return $clean;
 }
 
-function route_questionnaire($method, $code) {
+function questionnaire_scope($user) {
+    $cui = clean_string($user['company_cui'] ?? null, 50);
+    if ($cui !== null) return ['s.company_cui = ?', [$cui], $cui];
+    return ['s.company_cui IS NULL AND s.user_id = ?', [(int)$user['id']], null];
+}
+
+function questionnaire_find($code, $id, $user) {
+    list($where, $params) = questionnaire_scope($user);
+    $stmt = db()->prepare("SELECT s.*, c.username AS created_by_name, u.username AS updated_by_name
+        FROM questionnaire_sessions s
+        LEFT JOIN users c ON c.id = s.user_id
+        LEFT JOIN users u ON u.id = s.updated_by
+        WHERE s.code = ? AND s.id = ? AND $where");
+    $stmt->execute(array_merge([$code, $id], $params));
+    return $stmt->fetch() ?: null;
+}
+
+function questionnaire_json($row, $withAnswers) {
+    $out = [
+        'id' => $row['id'],
+        'name' => $row['name'],
+        'status' => $row['status'],
+        'created_at' => (int)$row['created_at'],
+        'updated_at' => (int)$row['updated_at'],
+        'finalized_at' => $row['finalized_at'] !== null ? (int)$row['finalized_at'] : null,
+        'created_by' => $row['created_by_name'],
+        'updated_by' => $row['updated_by_name'],
+    ];
+    if ($withAnswers) {
+        $answers = json_decode($row['answers'], true);
+        $out['answers'] = (object)(is_array($answers) ? $answers : []);
+    }
+    return $out;
+}
+
+function route_questionnaire($method, $code, $id) {
     $user = require_auth();
+    list($where, $scopeParams, $cui) = questionnaire_scope($user);
+    $now = time();
+
+    if ($method === 'GET' && !$id) {
+        $stmt = db()->prepare("SELECT s.*, c.username AS created_by_name, u.username AS updated_by_name
+            FROM questionnaire_sessions s
+            LEFT JOIN users c ON c.id = s.user_id
+            LEFT JOIN users u ON u.id = s.updated_by
+            WHERE s.code = ? AND $where ORDER BY s.updated_at DESC");
+        $stmt->execute(array_merge([$code], $scopeParams));
+        $list = [];
+        foreach ($stmt->fetchAll() as $row) $list[] = questionnaire_json($row, false);
+        json_response(['code' => $code, 'sessions' => $list]);
+    }
+
+    if ($method === 'POST' && !$id) {
+        $body = read_json_body();
+        $name = clean_string($body['name'] ?? null, 100);
+        if ($name === null) json_error('Denumire invalida', 400);
+        $answers = [];
+        if (array_key_exists('answers', $body)) {
+            $answers = validate_questionnaire_answers($body['answers']);
+            if ($answers === null) json_error('Raspunsuri invalide', 400);
+        }
+        $newId = gen_id();
+        $stmt = db()->prepare('INSERT INTO questionnaire_sessions (id, code, company_cui, user_id, updated_by, name, status, answers, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$newId, $code, $cui, $user['id'], $user['id'], $name, 'draft', json_encode((object)$answers, JSON_UNESCAPED_UNICODE), $now, $now]);
+        json_response(['ok' => true, 'session' => questionnaire_json(questionnaire_find($code, $newId, $user), true)]);
+    }
+
+    if (!$id) json_error('Method not allowed', 405);
+
+    $row = questionnaire_find($code, $id, $user);
+    if (!$row) json_error('Completarea nu exista', 404);
 
     if ($method === 'GET') {
-        $stmt = db()->prepare('SELECT answers, updated_at FROM questionnaire_responses WHERE user_id = ? AND code = ?');
-        $stmt->execute([$user['id'], $code]);
-        $row = $stmt->fetch();
-        $answers = $row ? json_decode($row['answers'], true) : null;
-        json_response([
-            'code' => $code,
-            'answers' => (object)(is_array($answers) ? $answers : []),
-            'updated_at' => $row ? (int)$row['updated_at'] : null,
-        ]);
+        json_response(['session' => questionnaire_json($row, true)]);
     }
 
     if ($method === 'PUT') {
         $body = read_json_body();
-        $answers = validate_questionnaire_answers($body['answers'] ?? null);
-        if ($answers === null) json_error('Raspunsuri invalide', 400);
-        $json = json_encode((object)$answers, JSON_UNESCAPED_UNICODE);
-        if (strlen($json) > 65536) json_error('Raspunsuri prea mari', 413);
-
-        $now = time();
-        $stmt = db()->prepare('UPDATE questionnaire_responses SET answers = ?, updated_at = ? WHERE user_id = ? AND code = ?');
-        $stmt->execute([$json, $now, $user['id'], $code]);
-        if ($stmt->rowCount() === 0) {
-            $stmt = db()->prepare('INSERT INTO questionnaire_responses (user_id, code, answers, created_at, updated_at) VALUES (?, ?, ?, ?, ?)');
-            $stmt->execute([$user['id'], $code, $json, $now, $now]);
+        $sets = [];
+        $params = [];
+        if (array_key_exists('name', $body)) {
+            $name = clean_string($body['name'], 100);
+            if ($name === null) json_error('Denumire invalida', 400);
+            $sets[] = 'name = ?';
+            $params[] = $name;
         }
-        json_response(['ok' => true, 'updated_at' => $now]);
+        if (array_key_exists('status', $body)) {
+            if (!in_array($body['status'], ['draft', 'final'], true)) json_error('Stare invalida', 400);
+            $sets[] = 'status = ?';
+            $params[] = $body['status'];
+            $sets[] = 'finalized_at = ?';
+            $params[] = $body['status'] === 'final' ? $now : null;
+            $row['status'] = $body['status'];
+        }
+        if (array_key_exists('answers', $body)) {
+            if ($row['status'] === 'final') json_error('Completarea este finalizata', 409);
+            $answers = validate_questionnaire_answers($body['answers']);
+            if ($answers === null) json_error('Raspunsuri invalide', 400);
+            $json = json_encode((object)$answers, JSON_UNESCAPED_UNICODE);
+            if (strlen($json) > 65536) json_error('Raspunsuri prea mari', 413);
+            $sets[] = 'answers = ?';
+            $params[] = $json;
+        }
+        if (!$sets) json_error('Nimic de modificat', 400);
+        $sets[] = 'updated_by = ?';
+        $params[] = $user['id'];
+        $sets[] = 'updated_at = ?';
+        $params[] = $now;
+        $params[] = $id;
+        db()->prepare('UPDATE questionnaire_sessions SET ' . implode(', ', $sets) . ' WHERE id = ?')->execute($params);
+        json_response(['ok' => true, 'session' => questionnaire_json(questionnaire_find($code, $id, $user), false)]);
+    }
+
+    if ($method === 'DELETE') {
+        db()->prepare('DELETE FROM questionnaire_sessions WHERE id = ?')->execute([$id]);
+        json_response(['ok' => true]);
     }
 
     json_error('Method not allowed', 405);

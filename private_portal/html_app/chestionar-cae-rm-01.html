@@ -1,189 +1,251 @@
 <!doctype html>
-<html lang="ro">
+<html lang="ro" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Autoevaluare CAE-RM-01</title>
 <meta name="description" content="Chestionar de autoevaluare a gradului de aderență la cadrul legal: reglementări interne, gestiune CIM, beneficii salariale, planificare și evidență consum manoperă, calcul salarial">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap">
+<script>(function(){ try { var t = localStorage.getItem("lp:theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch(e) {} })();</script>
 <style>
-/* Layout: audit worksheet. Sticky score strip, four numbered sections of question rows, results panel at the end. Same token family as PCL-CIM-01. */
-:root{
-  --bg:#f7f6f2; --paper:#fffdf9; --fg:#1d2430; --muted:#5b6475; --rule:#d9d5cb;
-  --ink:#1f3a5f; --ink-soft:#e3ebf5; --amber:#9a5b00; --amber-soft:#fbefd6;
-  --r1:#3d6b3a; --r1s:#e2efe0; --r2:#7a6a00; --r2s:#f3eec9; --r3:#a3501a; --r3s:#f8e3d3; --r4:#8f1f2b; --r4s:#f6dcdf;
-  --good:#2f6b3a; --warn:#9a5b00; --bad:#8f1f2b; --code:#edeae2;
-  --display:"Spectral",Georgia,"Times New Roman",serif;
-  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --mono:"Source Code Pro",ui-monospace,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#151a22; --paper:#1c222c; --fg:#e8e6df; --muted:#a3abb8; --rule:#333b48;
-  --ink:#9dbbe0; --ink-soft:#243247; --amber:#e8b35a; --amber-soft:#3b2e13;
-  --r1:#9ccf95; --r1s:#1f3320; --r2:#e0cf5a; --r2s:#3a3414; --r3:#f0a06c; --r3s:#3f2616; --r4:#f08a95; --r4s:#43202a;
-  --good:#9ccf95; --warn:#e8b35a; --bad:#f08a95; --code:#242c38; color-scheme:dark }}
+/* Identitate vizuală smartBIZ Portal: aceiași tokeni ca în portal/style.css */
 :root[data-theme="dark"]{
-  --bg:#151a22; --paper:#1c222c; --fg:#e8e6df; --muted:#a3abb8; --rule:#333b48;
-  --ink:#9dbbe0; --ink-soft:#243247; --amber:#e8b35a; --amber-soft:#3b2e13;
-  --r1:#9ccf95; --r1s:#1f3320; --r2:#e0cf5a; --r2s:#3a3414; --r3:#f0a06c; --r3s:#3f2616; --r4:#f08a95; --r4s:#43202a;
-  --good:#9ccf95; --warn:#e8b35a; --bad:#f08a95; --code:#242c38; color-scheme:dark }
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
-a{color:var(--ink)}
-.wrap{max-width:1100px;margin:0 auto;padding-block:0 72px;padding-inline:16px}
-header.mast{padding-block:28px 20px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;border-bottom:1px solid var(--rule)}
-.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
-h1{font-family:var(--display);font-weight:600;font-size:clamp(24px,3.2vw,34px);line-height:1.15;margin:0;text-wrap:balance}
-.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px 24px;font-size:14px;flex:1 1 300px;min-width:0}
-.meta span{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.meta b{font-weight:600}
-.meta b.ok{color:var(--good)} .meta b.err{color:var(--bad)}
-.intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px 32px;padding-block:20px;border-bottom:1px solid var(--rule)}
-.intro h2{font-family:var(--display);font-size:18px;margin:0 0 8px}
-.intro p,.intro li{font-size:15px;margin:0 0 6px}
-.intro ul{margin:0;padding-left:1.2em}
-.scorebar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);padding-block:10px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.tile{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px;min-width:0}
-.tile .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile .val{font-family:var(--mono);font-size:20px;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
-.tile .sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile.total{border-color:var(--ink);background:var(--ink-soft)}
-.tile .val.good{color:var(--good)} .tile .val.warn{color:var(--warn)} .tile .val.bad{color:var(--bad)}
-section.area{margin-top:36px}
-section.area>h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0 0 4px;text-wrap:balance;scroll-margin-top:110px}
-section.area>.sub{font-size:14px;color:var(--muted);margin:0 0 14px}
-.qlist{display:flex;flex-direction:column;gap:10px}
-section.area>.desc{font-size:14.5px;margin:0 0 14px}
-.qlist h3.grp{font-family:var(--display);font-size:18px;margin:14px 0 2px}
+  --bg:#0d1520; --bg-grad:radial-gradient(ellipse at top left,#14202f 0%,#0d1520 50%,#0a1018 100%);
+  --panel:#141d2c; --panel-alt:#1a2433; --border:#243044; --border-soft:#1c2638;
+  --text:#e6ecf5; --text-dim:#94a3b8; --text-muted:#64748b;
+  --primary:#2D8B8E; --primary-hover:#3aa1a4; --accent:#4A90B5; --amber:#d97706; --danger:#dc2626; --success:#16a34a;
+  --input-bg:#0f1825; --input-border:#283446; --card-hover:#1d2638; --header-bg:rgba(13,21,32,.8);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#f5f6f7; --bg-grad:radial-gradient(ellipse at top left,#ffffff 0%,#f5f6f7 60%,#eceef1 100%);
+  --panel:#ffffff; --panel-alt:#f9fafb; --border:#e5e7eb; --border-soft:#eef0f3;
+  --text:#0f172a; --text-dim:#475569; --text-muted:#94a3b8;
+  --primary:#2D8B8E; --primary-hover:#1f6e71; --accent:#1F4788; --amber:#d97706; --danger:#dc2626; --success:#16a34a;
+  --input-bg:#ffffff; --input-border:#d1d5db; --card-hover:#f3f4f6; --header-bg:rgba(255,255,255,.85);
+  color-scheme:light;
+}
+:root{ --r1:var(--success); --r2:#ca8a04; --r3:#ea580c; --r4:var(--danger); --mono:'IBM Plex Mono',monospace; }
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html.modal-open{overflow:hidden}
+body{font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5;background:var(--bg) var(--bg-grad) fixed;color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+[hidden]{display:none !important}
+
+/* ---------- Header (portal) ---------- */
+.header{position:sticky;top:0;z-index:30;background:var(--header-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:56px;gap:.5rem}
+.header-left{display:flex;align-items:center;gap:.625rem;min-width:0}
+.header-actions{display:flex;align-items:center;gap:.375rem;flex-shrink:0}
+.logo-mark{width:32px;height:32px;border-radius:.5rem;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.logo-text-main{font-weight:600;font-size:15px;letter-spacing:-.01em;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo-text-sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text-muted);margin-top:.25rem}
+.icon-btn{padding:.5rem;border-radius:.375rem;color:var(--text-dim);transition:background-color 150ms;display:flex;align-items:center;justify-content:center}
+.icon-btn:hover{background:var(--card-hover);color:var(--text)}
+.icon-btn:focus-visible,.btn:focus-visible,.modal-close:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+/* ---------- Butoane și câmpuri (portal) ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:.375rem;font-weight:500;font-size:13px;padding:.5rem .875rem;border:1px solid transparent;transition:all 150ms;letter-spacing:.01em;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:.375rem .625rem;font-size:12px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+.btn-secondary{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-secondary:hover:not(:disabled){background:var(--card-hover)}
+.btn-ghost{background:transparent;color:var(--text-dim)}
+.btn-ghost:hover:not(:disabled){background:var(--card-hover)}
+.btn-danger{background:transparent;color:var(--danger);border-color:var(--border)}
+.btn-danger:hover:not(:disabled){background:var(--danger);color:#fff;border-color:var(--danger)}
+.field{margin-bottom:.75rem}
+.field-label{display:block;margin-bottom:.375rem;color:var(--text-dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);font-weight:500}
+.input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);color:var(--text);border-radius:.375rem;padding:.625rem .75rem;font-size:14px;outline:none;transition:border-color 150ms}
+.input:focus{border-color:var(--primary)}
+.input::placeholder{color:var(--text-muted)}
+.input:disabled{opacity:.6;cursor:not-allowed}
+select.input{padding:.5rem .625rem;cursor:pointer}
+select.input:disabled{cursor:not-allowed}
+
+/* ---------- Layout ---------- */
+.main{max-width:1280px;margin:0 auto;padding:0 1rem 1.25rem}
+.content-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:1.25rem 0 .875rem;border-bottom:2px solid var(--primary)}
+.content-header-info{display:flex;align-items:flex-start;gap:.75rem;min-width:0}
+.content-icon{width:36px;height:36px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:color-mix(in srgb,var(--primary) 15%,transparent);color:var(--primary);margin-top:.125rem}
+.content-title{font-size:1.25rem;font-weight:600;letter-spacing:-.02em;line-height:1.3;text-wrap:balance}
+.content-subtitle{font-size:12px;color:var(--text-dim);margin-top:.25rem}
+
+/* butonul i: superscript după titlu, 18×18 cu cerc de 11,25 px, zonă de atingere 32×32 */
+.info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;margin-left:.375rem;vertical-align:super;position:relative;color:var(--text-dim);border-radius:50%;opacity:0;transition:opacity 120ms,color 120ms}
+.info::before{content:"";position:absolute;inset:-7px}
+.info .ic{width:11.25px;height:11.25px;border-radius:50%;border:1px solid currentColor;font:600 8px/1 var(--mono);display:flex;align-items:center;justify-content:center;pointer-events:none}
+.titlebox:hover .info,.info:focus-visible,.info:hover,.info[aria-expanded="true"]{opacity:1}
+.info:hover,.info:focus-visible,.info[aria-expanded="true"]{color:var(--primary)}
+.info:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+@media (hover:none){.info{opacity:1}}
+
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem;margin:1rem 0}
+.meta>div{background:var(--panel-alt);border:1px solid var(--border-soft);border-radius:.375rem;padding:.5rem .625rem;min-width:0}
+.meta .stat-label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.125rem}
+.meta b{font-weight:600;font-size:13px;overflow-wrap:anywhere}
+.meta b.ok{color:var(--success)} .meta b.err{color:var(--danger)}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:.625rem .875rem;align-items:flex-end;background:var(--panel);border:1px solid var(--border);border-radius:.5rem;padding:.75rem .875rem;margin:1rem 0}
+.toolbar-field{display:flex;flex-direction:column;gap:.375rem;flex:1 1 260px;min-width:0}
+.toolbar-field .field-label{margin:0}
+.toolbar-actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.toolbar-info{flex-basis:100%;font-size:12px;color:var(--text-dim)}
+.toolbar-info.err{color:var(--danger)}
+.confirm{display:inline-flex;gap:.5rem;align-items:center;font-size:13px}
+
+/* ---------- Scor ---------- */
+.scorebar{position:sticky;top:56px;z-index:20;background:var(--header-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:.625rem 0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem}
+.tile{background:var(--panel-alt);border:1px solid var(--border-soft);border-radius:.375rem;padding:.5rem .625rem;min-width:0}
+.tile .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .val{font-size:1.25rem;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
+.tile .sub{font-size:11px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.total{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent)}
+.good{color:var(--success)} .warn{color:var(--amber)} .bad{color:var(--danger)}
+
+/* ---------- Cerințe ---------- */
+section.area{margin-top:2rem}
+section.area>h2,.results>h2{font-size:1.125rem;font-weight:600;letter-spacing:-.02em;padding-bottom:.5rem;border-bottom:2px solid var(--primary);margin-bottom:.25rem;scroll-margin-top:140px}
+section.area>.sub{font-size:12px;color:var(--text-dim);margin-bottom:.875rem}
+section.area>.desc{font-size:13px;color:var(--text-dim);margin-bottom:.875rem}
+.qlist{display:flex;flex-direction:column;gap:.625rem}
+.qlist h3.grp{font-size:14px;font-weight:600;margin:.875rem 0 .125rem}
 .qlist h3.grp:first-child{margin-top:0}
-.q{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 20px;align-items:start}
-.q.crit{border-left:4px solid var(--r4)}
-.q.open{border-left:4px solid var(--r3)}
-.q .num{font-family:var(--mono);font-size:12px;color:var(--muted);margin-right:8px}
-.q .text{font-size:15.5px;line-height:1.45;margin:0}
-.q .basis{font-size:13px;color:var(--muted);margin:6px 0 0;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
-.q .basis a,.gaps a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px}
-.q .basis a:hover,.gaps a:hover{text-decoration-color:var(--ink)}
-.q .ev{font-size:13px;color:var(--muted);margin:4px 0 0}
-.q .ev b{font-weight:600;color:var(--fg)}
-.rk{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:600;padding:1px 6px;border-radius:3px;white-space:nowrap;line-height:1.5}
-.rk.R1{color:var(--r1);background:var(--r1s)} .rk.R2{color:var(--r2);background:var(--r2s)} .rk.R3{color:var(--r3);background:var(--r3s)} .rk.R4{color:var(--r4);background:var(--r4s)}
-.v{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--amber);background:var(--amber-soft);padding:0 4px;border-radius:3px}
-.ans{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.q{background:var(--panel);border:1px solid var(--border);border-radius:.5rem;padding:.75rem .875rem;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1.25rem;align-items:start;transition:border-color 150ms,box-shadow 150ms}
+.q.crit{border-color:var(--danger);box-shadow:inset 3px 0 0 var(--danger)}
+.q.open{border-color:var(--amber);box-shadow:inset 3px 0 0 var(--amber)}
+.q .num{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-right:.5rem;letter-spacing:.05em}
+.q .text{font-size:14px;line-height:1.5}
+.q .basis{font-size:12px;color:var(--text-dim);margin-top:.375rem;display:flex;flex-wrap:wrap;gap:.375rem .875rem;align-items:center}
+.q .basis a,.gaps a,.expo a,.info-body a{color:var(--primary);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--primary) 40%,transparent);text-underline-offset:2px}
+.q .basis a:hover,.gaps a:hover,.info-body a:hover{text-decoration-color:var(--primary)}
+.q .ev,.q .cost{font-size:12px;color:var(--text-dim);margin-top:.25rem}
+.q .ev b,.q .cost b{font-weight:600;color:var(--text)}
+.q .cost .amt{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rk{display:inline-flex;align-items:center;padding:1px 8px;border-radius:16px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em}
+.rk.R1{color:var(--r1);background:color-mix(in srgb,var(--r1) 14%,transparent)}
+.rk.R2{color:var(--r2);background:color-mix(in srgb,var(--r2) 14%,transparent)}
+.rk.R3{color:var(--r3);background:color-mix(in srgb,var(--r3) 14%,transparent)}
+.rk.R4{color:var(--r4);background:color-mix(in srgb,var(--r4) 14%,transparent)}
+.v{font-family:var(--mono);font-size:11px;color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent);padding:0 4px;border-radius:3px}
+.pen{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent);padding:0 5px;border-radius:3px}
+.ans{display:flex;gap:.25rem;flex-wrap:wrap;justify-content:flex-end}
 .ans label{position:relative;cursor:pointer}
 .ans input{position:absolute;opacity:0;width:0;height:0}
-.ans span{display:inline-block;padding:5px 10px;border:1px solid var(--rule);border-radius:3px;font-size:13.5px;line-height:1.2;background:var(--bg);user-select:none}
-.ans input:focus-visible+span{outline:2px solid var(--ink);outline-offset:1px}
-.ans input:checked+span.da{background:var(--r1s);color:var(--r1);border-color:var(--r1);font-weight:600}
-.ans input:checked+span.partial{background:var(--r2s);color:var(--r2);border-color:var(--r2);font-weight:600}
-.ans input:checked+span.nu{background:var(--r4s);color:var(--r4);border-color:var(--r4);font-weight:600}
-.ans input:checked+span.na{background:var(--code);color:var(--muted);border-color:var(--muted);font-weight:600}
+.ans span{display:inline-block;padding:.375rem .625rem;border:1px solid var(--input-border);border-radius:.375rem;font-size:12px;font-weight:500;line-height:1.2;background:var(--input-bg);color:var(--text-dim);user-select:none;transition:all 150ms}
+.ans label:hover span{background:var(--card-hover);color:var(--text)}
+.ans input:focus-visible+span{outline:2px solid var(--primary);outline-offset:1px}
+.ans input:disabled+span{cursor:not-allowed;opacity:.7}
+.ans input:checked+span.da{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success);border-color:var(--success);font-weight:600}
+.ans input:checked+span.partial{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber);border-color:var(--amber);font-weight:600}
+.ans input:checked+span.nu{background:color-mix(in srgb,var(--danger) 15%,transparent);color:var(--danger);border-color:var(--danger);font-weight:600}
+.ans input:checked+span.na{background:var(--panel-alt);color:var(--text-muted);border-color:var(--text-muted);font-weight:600}
 .note{grid-column:1/-1}
-.note input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--bg);color:var(--fg);font:inherit;font-size:13.5px;padding:6px 8px}
-.note input:focus{outline:2px solid var(--ink);outline-offset:0;border-color:var(--ink)}
-.results{margin-top:44px;border-top:2px solid var(--ink);padding-top:18px}
-.results h2,.dosar h2{font-family:var(--display);font-size:24px;margin:0 0 12px}
-.dosar{margin-top:44px;border-top:2px solid var(--ink);padding-top:18px}
-.dosar h3{font-family:var(--display);font-size:18px;margin:18px 0 6px}
-.dosar p{font-size:15px;margin:0 0 8px}
-.dosar td a,.expo a,.cost a{color:var(--ink)}
-.q .cost{font-size:13px;color:var(--muted);margin:4px 0 0}
-.q .cost b{font-weight:600;color:var(--fg)}
-.q .cost .amt{font-family:var(--mono);font-weight:600;color:var(--fg)}
-.pen{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--r4);background:var(--r4s);padding:0 5px;border-radius:3px}
-.expo{font-size:14.5px;margin:0 0 6px}
-.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--paper);margin:12px 0 18px}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
-th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
-tr:last-child td{border-bottom:0}
+.note .input{font-size:13px;padding:.5rem .625rem}
+
+/* ---------- Rezultate ---------- */
+.results{margin-top:2.5rem}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--border);border-radius:.75rem;margin:.75rem 0 1rem}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:.625rem .875rem;border-bottom:1px solid var(--border-soft);text-align:left;vertical-align:top}
+thead{background:var(--panel-alt)}
+th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
 td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .grade{font-weight:600}
-.grade.good{color:var(--good)} .grade.warn{color:var(--warn)} .grade.bad{color:var(--bad)}
-.gaps h3{font-family:var(--display);font-size:18px;margin:18px 0 8px}
-.gaps ul{margin:0;padding-left:1.2em}
-.gaps li{margin:4px 0;font-size:14.5px}
-.gaps .empty{color:var(--muted);font-size:14px}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
-button{font:inherit;font-size:14px;padding:8px 14px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer}
-button.secondary{background:transparent;color:var(--ink)}
-button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-.status{font-size:13px;color:var(--muted)}
-.confirm{display:flex;gap:8px;align-items:center;font-size:14px}
-.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);margin-top:10px;align-items:center}
-.titlebox{position:relative}
-.info{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;padding:0;margin-left:10px;vertical-align:middle;position:relative;top:-2px;border-radius:50%;border:0;background:transparent;color:var(--ink);line-height:0;cursor:pointer}
-.info svg{display:block;width:22px;height:22px;pointer-events:none}
-.info:hover,.info[aria-expanded="true"]{color:var(--amber)}
-.info:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-.pop{position:absolute;left:0;top:calc(100% + 10px);z-index:20;width:min(440px,calc(100vw - 32px));background:var(--paper);border:1px solid var(--rule);border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:14px 16px;font-size:14px;line-height:1.5}
-.pop p{margin:0 0 10px}
-.pop p:last-of-type{margin-bottom:12px}
-button.small{font-size:13px;padding:5px 10px}
-footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.expo{font-size:13px;color:var(--text-dim);margin-bottom:.375rem}
+.expo b{color:var(--text)}
+.gaps h3{font-size:14px;font-weight:600;margin:1rem 0 .5rem}
+.gaps ul{padding-left:1.2em}
+.gaps li{margin:.25rem 0;font-size:13px}
+.gaps li span{color:var(--text-dim)}
+.gaps .empty{color:var(--text-muted);font-size:13px}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.125rem;align-items:center}
+.status{font-size:12px;color:var(--text-dim)}
+#reportText{width:100%;min-height:200px;margin-top:.625rem;font-family:var(--mono);font-size:12px}
+footer{margin-top:2.5rem;padding-top:.875rem;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
+
+/* ---------- Modale (portal) ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn 150ms ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:28rem;background:var(--panel);border:1px solid var(--border);border-radius:.75rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);animation:slideUp 200ms ease-out;max-height:calc(100vh - 2rem);overflow-y:auto;outline:none}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border-soft);position:sticky;top:0;background:var(--panel);z-index:1}
+.modal-title{font-weight:600;font-size:16px;letter-spacing:-.01em}
+.modal-close{padding:.375rem;border-radius:.375rem;color:var(--text-dim);transition:background-color 150ms;display:flex;align-items:center}
+.modal-close:hover{background:var(--card-hover);color:var(--text)}
+.modal-body{padding:1.25rem}
+.modal-footer{display:flex;gap:.5rem;justify-content:flex-end;padding:1rem 1.25rem;border-top:1px solid var(--border-soft)}
+.info-body p{font-size:13px;color:var(--text-dim);margin-bottom:.625rem}
+.info-body b{color:var(--text);font-weight:600}
+.info-body h3{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);margin:1rem 0 .375rem}
+.info-body ul{padding-left:1.1em;margin-bottom:.625rem}
+.info-body li{font-size:13px;color:var(--text-dim);margin-bottom:.25rem}
+.legend{display:flex;flex-wrap:wrap;gap:.375rem .875rem;font-size:12px;color:var(--text-dim);align-items:center;margin-top:.5rem}
+.legend>span{display:inline-flex;align-items:center;gap:.375rem}
+
 @media (max-width:760px){
-  .scorebar{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-  .tile{padding:6px}
-  .tile .val{font-size:16px}
+  .scorebar{grid-template-columns:repeat(4,minmax(0,1fr));gap:.25rem}
+  .tile{padding:.375rem .5rem}
+  .tile .val{font-size:1rem}
   .tile .sub{display:none}
   .q{grid-template-columns:1fr}
   .ans{justify-content:flex-start}
-  section.area>h2{font-size:21px}
+  .content-title{font-size:1.125rem}
 }
-@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .modal-backdrop,.modal{animation:none} }
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="mast">
-  <div>
-    <p class="eyebrow">Chestionar de autoevaluare</p>
-    <div class="titlebox">
-      <h1>Gradul de aderență la cadrul legal al operațiunilor de personal<button type="button" class="info" id="infoBtn" aria-label="Informații despre chestionar" aria-expanded="false" aria-controls="infoPop"><svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="6.6" r="1.45" fill="currentColor"/><rect x="9.9" y="9.4" width="2.2" height="7" rx="0.6" fill="currentColor"/></svg></button></h1>
-      <div class="pop" id="infoPop" role="dialog" aria-label="Informații despre chestionar" hidden>
-        <p><b>Ce este.</b> Instrument de autoevaluare internă a conformării cu legislația muncii și fiscală pentru cinci procese, în ordinea fluxului: cadrul de reglementare internă (regulament intern, CCM, fișe de post, politici obligatorii), gestiunea CIM, beneficiile salariale, planificarea, documentarea și evidența consumului de manoperă, calculul salarial. 92 de cerințe plus opisul dosarului personal (39 documente), fiecare cu temei legal, clasă de risc, dovada de verificat și costul estimat al neconformării.</p>
-        <p><b>Cine și când.</b> Se completează de responsabilul RU și de salarizare, pe bază de documente, și se validează de administrator. Recomandat trimestrial și înaintea unui control ITM. Durată: 3–4 ore cu dovezile la îndemână.</p>
-        <p><b>Punctaj.</b> Ponderea cerinței este clasa de risc (R4 = 4 … R1 = 1). Da = 1, Parțial = 0,5, Nu = 0, N.A. exclus. Gradul de aderență = punctaj obținut / punctaj maxim aplicabil. Orice cerință R4 cu Nu sau Parțial este neconformitate critică, indiferent de procent.</p>
-        <p><b>Salvare.</b> Răspunsurile se salvează automat, la fiecare modificare, în contul tău din portalul smartBIZ și se regăsesc la următoarea deschidere, de pe orice dispozitiv. Starea salvării apare în antet, la „Salvare”. Raportul se copiază cu butonul de la finalul paginii.</p>
-        <p><b>Document corelat.</b> <a href="https://claude.ai/artifact/3gh9Via2hThfZgccaht89F" target="_blank" rel="noopener">Procedura PCL-CIM-01</a> (metodologia de risc și materialitate, termene, sancțiuni). Referințele legale sunt legături către textul consolidat de pe <a href="https://legislatie.just.ro" target="_blank" rel="noopener">legislatie.just.ro</a> (EUR-Lex pentru actele UE); cele marcate [V] se reconfirmă acolo înainte de a fi invocate într-un act oficial.</p>
-        <button type="button" class="secondary small" id="infoClose">Închide</button>
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo-mark"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+      <div style="min-width:0">
+        <div class="logo-text-main">Autoevaluare CAE-RM-01</div>
+        <div class="logo-text-sub">SMARTBIZ PORTAL</div>
       </div>
     </div>
-  </div>
-  <div class="meta">
-    <div><span>Cod</span><b>CAE-RM-01</b></div>
-    <div><span>Versiune</span><b>1.0</b></div>
-    <div><span>Cadru legal verificat</span><b>13 octombrie 2026</b></div>
-    <div><span>Document corelat</span><b>PCL-CIM-01</b></div>
-    <div><span>Salvare</span><b id="saveState">…</b></div>
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="themeBtn" title="Schimbă tema" aria-label="Schimbă tema"></button>
+      <a class="btn btn-secondary sm" href="/">Portal</a>
+    </div>
   </div>
 </header>
 
-<div class="intro">
-  <div>
-    <h2>Cum se completează</h2>
-    <ul>
-      <li><b>Da</b>: conform și dovedit cu documentul din rubrica „Dovadă”; la opisul dosarului personal, documentul există în toate dosarele verificate prin sondaj.</li>
-      <li><b>Parțial</b>: conform pentru o parte din cazuri sau fără dovadă completă.</li>
-      <li><b>Nu</b>: neconform.</li>
-      <li><b>N.A.</b>: obligația nu se aplică (se motivează în observații); nu intră în calcul.</li>
-    </ul>
-    <p style="margin-top:8px">Răspunsurile se salvează automat în contul tău din portal. Raportul se copiază cu butonul de la final.</p>
-  </div>
-  <div>
-    <h2>Cum se calculează</h2>
-    <p>Fiecare întrebare are ponderea clasei de risc (R4 = 4, R3 = 3, R2 = 2, R1 = 1). Da = 1, Parțial = 0,5, Nu = 0. Gradul de aderență = punctaj obținut / punctaj maxim aplicabil.</p>
-    <p><b>Regula de materialitate:</b> orice întrebare R4 cu răspuns Nu sau Parțial este neconformitate critică (prioritate 1), indiferent de procent. R3 cu Nu = prioritate 2.</p>
-    <p><b>Cost estimat al neconformării:</b> fiecare cerință arată intervalul în lei pentru o constatare (o persoană sau o faptă), din sancțiunea legală și costurile conexe. Rezultatele însumează intervalele răspunsurilor Nu (integral) și Parțial (50 %); răspunderea penală se semnalează, nu se monetizează.</p>
-    <div class="legend">
-      <span><span class="rk R4">R4</span> penal / sistare</span>
-      <span><span class="rk R3">R3</span> major</span>
-      <span><span class="rk R2">R2</span> moderat</span>
-      <span><span class="rk R1">R1</span> minor</span>
-      <span><span class="v">[V]</span> de reconfirmat pe <a href="https://legislatie.just.ro" target="_blank" rel="noopener">legislatie.just.ro</a></span>
+<main class="main">
+<div class="content-header">
+  <div class="content-header-info">
+    <div class="content-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div>
+    <div style="min-width:0">
+      <h1 class="content-title titlebox">Gradul de aderență la cadrul legal al operațiunilor de personal<button type="button" class="info" id="infoBtn" aria-label="Informații despre chestionar" aria-expanded="false" aria-controls="infoModal"><span class="ic" aria-hidden="true">i</span></button></h1>
+      <div class="content-subtitle">Chestionar de autoevaluare · corelat cu procedura PCL-CIM-01</div>
     </div>
   </div>
+</div>
+
+<div class="meta">
+  <div><span class="stat-label">Cod</span><b>CAE-RM-01</b></div>
+  <div><span class="stat-label">Versiune</span><b>1.0</b></div>
+  <div><span class="stat-label">Cadru legal verificat</span><b>13 octombrie 2026</b></div>
+  <div><span class="stat-label">Document corelat</span><b>PCL-CIM-01</b></div>
+  <div><span class="stat-label">Salvare</span><b id="saveState">…</b></div>
+</div>
+
+<div class="toolbar" id="sessions">
+  <label class="toolbar-field"><span class="field-label">Completare</span><select class="input" id="sessionSelect" aria-label="Completarea deschisă"></select></label>
+  <div class="toolbar-actions">
+    <button type="button" class="btn btn-primary sm" id="newBtn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Chestionar nou</button>
+    <button type="button" class="btn btn-secondary sm" id="finalBtn" disabled>Finalizează</button>
+    <button type="button" class="btn btn-danger sm" id="delBtn" disabled><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Șterge</button>
+    <span class="confirm" id="delConfirm" hidden>Sigur? <button type="button" class="btn btn-danger sm" id="delYes">Da, șterge</button><button type="button" class="btn btn-ghost sm" id="delNo">Nu</button></span>
+  </div>
+  <div class="toolbar-info" id="sessionInfo"></div>
 </div>
 
 <div class="scorebar" id="scorebar" aria-live="polite"></div>
@@ -199,15 +261,55 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-si
   <p class="expo" id="expo"></p>
   <div class="gaps" id="gaps"></div>
   <div class="actions">
-    <button type="button" id="copyBtn">Copiază raportul</button>
-    <button type="button" class="secondary" id="resetBtn">Resetează răspunsurile</button>
-    <span class="confirm" id="confirmBox" hidden>Sigur? <button type="button" id="resetYes">Da, șterge</button> <button type="button" class="secondary" id="resetNo">Nu</button></span>
+    <button type="button" class="btn btn-primary" id="copyBtn">Copiază raportul</button>
+    <button type="button" class="btn btn-secondary" id="resetBtn">Resetează răspunsurile</button>
+    <span class="confirm" id="confirmBox" hidden>Sigur? <button type="button" class="btn btn-danger sm" id="resetYes">Da, șterge</button><button type="button" class="btn btn-ghost sm" id="resetNo">Nu</button></span>
     <span class="status" id="status"></span>
   </div>
-  <textarea id="reportText" aria-label="Raport" hidden></textarea>
+  <textarea id="reportText" class="input" aria-label="Raport" hidden></textarea>
 </section>
 
 <footer>Instrument de autoevaluare internă corelat cu procedura PCL-CIM-01. Nu înlocuiește consultanța juridică. Sursa versionată: depozitul OperatiuneManopera, fișierul docs/Chestionar-autoevaluare-aderenta-legala.md.</footer>
+</main>
+
+<div class="modal-backdrop" id="infoModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle" tabindex="-1">
+    <div class="modal-header"><div class="modal-title" id="infoTitle">Despre chestionar</div><button type="button" class="modal-close" id="infoClose" aria-label="Închide"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <div class="modal-body info-body">
+        <p><b>Ce este.</b> Instrument de autoevaluare internă a conformării cu legislația muncii și fiscală pentru cinci procese, în ordinea fluxului: cadrul de reglementare internă (regulament intern, CCM, fișe de post, politici obligatorii), gestiunea CIM, beneficiile salariale, planificarea, documentarea și evidența consumului de manoperă, calculul salarial. 92 de cerințe plus opisul dosarului personal (39 documente), fiecare cu temei legal, clasă de risc, dovada de verificat și costul estimat al neconformării.</p>
+        <p><b>Cine și când.</b> Se completează de responsabilul RU și de salarizare, pe bază de documente, și se validează de administrator. Recomandat trimestrial și înaintea unui control ITM. Durată: 3–4 ore cu dovezile la îndemână.</p>
+        <p><b>Punctaj.</b> Ponderea cerinței este clasa de risc (R4 = 4 … R1 = 1). Da = 1, Parțial = 0,5, Nu = 0, N.A. exclus. Gradul de aderență = punctaj obținut / punctaj maxim aplicabil. Orice cerință R4 cu Nu sau Parțial este neconformitate critică, indiferent de procent.</p>
+        <p><b>Completări.</b> Fiecare autoevaluare este o completare separată, cu denumire proprie, vizibilă tuturor utilizatorilor firmei din portal; se rețin cine a creat-o și cine a modificat-o ultima dată. Răspunsurile se salvează automat pe server la fiecare modificare și se regăsesc la următoarea deschidere, de pe orice dispozitiv; starea apare în caseta „Salvare”. „Chestionar nou” pornește o completare goală. „Finalizează” blochează completarea pentru editare, păstrând scorurile și raportul; „Redeschide” o readuce în lucru. „Resetează răspunsurile” golește completarea deschisă. Raportul se copiază cu butonul de la finalul paginii.</p>
+        <p><b>Document corelat.</b> <a href="https://claude.ai/artifact/3gh9Via2hThfZgccaht89F" target="_blank" rel="noopener">Procedura PCL-CIM-01</a> (metodologia de risc și materialitate, termene, sancțiuni). Referințele legale sunt legături către textul consolidat de pe <a href="https://legislatie.just.ro" target="_blank" rel="noopener">legislatie.just.ro</a> (EUR-Lex pentru actele UE); cele marcate [V] se reconfirmă acolo înainte de a fi invocate într-un act oficial.</p>
+        <h3>Cum se completează</h3>
+        <ul>
+      <li><b>Da</b>: conform și dovedit cu documentul din rubrica „Dovadă”; la opisul dosarului personal, documentul există în toate dosarele verificate prin sondaj.</li>
+      <li><b>Parțial</b>: conform pentru o parte din cazuri sau fără dovadă completă.</li>
+      <li><b>Nu</b>: neconform.</li>
+      <li><b>N.A.</b>: obligația nu se aplică (se motivează în observații); nu intră în calcul.</li>
+    </ul>
+        <h3>Cum se calculează</h3>
+        <p>Fiecare întrebare are ponderea clasei de risc (R4 = 4, R3 = 3, R2 = 2, R1 = 1). Da = 1, Parțial = 0,5, Nu = 0. Gradul de aderență = punctaj obținut / punctaj maxim aplicabil.</p>
+    <p><b>Regula de materialitate:</b> orice întrebare R4 cu răspuns Nu sau Parțial este neconformitate critică (prioritate 1), indiferent de procent. R3 cu Nu = prioritate 2.</p>
+    <p><b>Cost estimat al neconformării:</b> fiecare cerință arată intervalul în lei pentru o constatare (o persoană sau o faptă), din sancțiunea legală și costurile conexe. Rezultatele însumează intervalele răspunsurilor Nu (integral) și Parțial (50 %); răspunderea penală se semnalează, nu se monetizează.</p>
+        <div class="legend"><span><span class="rk R4">R4</span> penal / sistare</span>
+      <span><span class="rk R3">R3</span> major</span>
+      <span><span class="rk R2">R2</span> moderat</span>
+      <span><span class="rk R1">R1</span> minor</span>
+      <span><span class="v">[V]</span> de reconfirmat pe <a href="https://legislatie.just.ro" target="_blank" rel="noopener">legislatie.just.ro</a></span></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-primary" id="infoOk">Am înțeles</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="newModal" hidden>
+  <form class="modal" id="newForm" role="dialog" aria-modal="true" aria-labelledby="newTitle">
+    <div class="modal-header"><div class="modal-title" id="newTitle">Chestionar nou</div><button type="button" class="modal-close" id="newClose" aria-label="Închide"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    <div class="modal-body">
+      <div class="field"><label class="field-label" for="newName">Denumire</label><input class="input" type="text" id="newName" maxlength="100" required autocomplete="off"></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-secondary" id="newCancel">Renunță</button><button type="submit" class="btn btn-primary">Creează</button></div>
+  </form>
 </div>
 
 <script>
@@ -217,70 +319,181 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-si
   var VAL = {da:1, partial:0.5, nu:0};
   var CODE = "cae-rm-01";
   var API = "/api/questionnaires/" + CODE;
-  var LEGACY_KEY = "cae-rm-01-v3"; // răspunsuri salvate anterior doar în browser; se preiau o singură dată
-  var state = {};
-  var saveEl = document.getElementById("saveState");
-  var saveTimer = null, saving = false, dirty = false, pending = false;
+  var LEGACY_KEY = "cae-rm-01-v3";      // răspunsuri salvate anterior doar în browser; se preiau o singură dată
+  var LAST_KEY = "cae-rm-01-session";   // comoditate per browser: ultima completare deschisă
+  var state = {};                       // răspunsurile completării deschise (același obiect ca current.answers)
+  var sessions = [], current = null;
+  var ICON = {sun: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>', moon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'};
 
-  function api(method, body){
+  var $ = function(id){ return document.getElementById(id); };
+  var saveEl = $("saveState"), selEl = $("sessionSelect"), newBtn = $("newBtn"), finalBtn = $("finalBtn"), delBtn = $("delBtn"),
+      delConfirm = $("delConfirm"), infoEl = $("sessionInfo"), areasEl = $("areas"), status = $("status"),
+      infoBtn = $("infoBtn"), infoModal = $("infoModal"), newModal = $("newModal"), newForm = $("newForm"), newName = $("newName"),
+      themeBtn = $("themeBtn");
+
+  // ---------- temă: aceeași cheie ca portalul ----------
+  function applyTheme(t){ document.documentElement.setAttribute("data-theme", t); themeBtn.innerHTML = t === "dark" ? ICON.sun : ICON.moon; }
+  themeBtn.addEventListener("click", function(){
+    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    try { localStorage.setItem("lp:theme", t); } catch(e) {}
+    applyTheme(t);
+  });
+  applyTheme(document.documentElement.getAttribute("data-theme") || "dark");
+
+  // ---------- API portal ----------
+  function api(method, path, body){
     var opt = {method: method, credentials: "same-origin"};
     if (body) { opt.headers = {"Content-Type": "application/json"}; opt.body = JSON.stringify(body); }
-    return fetch(API, opt).then(function(r){
+    return fetch(API + (path || ""), opt).then(function(r){
       return r.json().catch(function(){ return {}; }).then(function(d){
         if (r.ok) return d;
         throw new Error(r.status === 401 ? "sesiune expirată, autentifică-te în portal" : (d.error || "eroare " + r.status));
       });
     }, function(){ throw new Error("fără conexiune"); });
   }
+  function whenFull(ts){ var d = new Date(ts * 1000); return d.toLocaleDateString("ro-RO") + " " + d.toLocaleTimeString("ro-RO", {hour: "2-digit", minute: "2-digit"}); }
   function when(ts){
-    var d = new Date(ts * 1000), t = d.toLocaleTimeString("ro-RO", {hour: "2-digit", minute: "2-digit"});
-    return d.toDateString() === new Date().toDateString() ? t : d.toLocaleDateString("ro-RO") + " " + t;
+    var d = new Date(ts * 1000);
+    return d.toDateString() === new Date().toDateString() ? d.toLocaleTimeString("ro-RO", {hour: "2-digit", minute: "2-digit"}) : whenFull(ts);
   }
   function setSave(text, cls){ saveEl.textContent = text; saveEl.className = cls || ""; }
+  function barError(e){ infoEl.textContent = "Eroare: " + e.message; infoEl.className = "toolbar-info err"; }
 
-  // salvare în baza de date a portalului; întârzierea scurtă grupează tastarea observațiilor
-  function save(){ pending = true; clearTimeout(saveTimer); saveTimer = setTimeout(flush, 600); }
-  function flush(){
-    if (saving) { dirty = true; return; }
-    saving = true; dirty = false;
-    setSave("se salvează…");
-    api("PUT", {answers: state}).then(function(d){
-      saving = false;
-      if (dirty) { flush(); return; }
-      pending = false;
-      setSave("salvat " + when(d.updated_at), "ok");
-    }, function(e){
-      saving = false;
-      setSave("nesalvat: " + e.message, "err");
+  // ---------- salvare automată, în ordine, pe completarea deschisă ----------
+  var saveTimer = null, pending = false, savePromise = Promise.resolve();
+  function save(){
+    if (!current || current.status !== "draft") return;
+    var s = current; pending = true;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){ saveTimer = null; flush(s); }, 600);
+  }
+  function flush(s){
+    savePromise = savePromise.then(function(){
+      setSave("se salvează…");
+      return api("PUT", "/" + s.id, {answers: s.answers}).then(function(d){
+        s.updated_at = d.session.updated_at; s.updated_by = d.session.updated_by;
+        if (!saveTimer) pending = false;
+        if (s === current) { showSaved(); renderInfo(); }
+      }, function(e){ setSave("nesalvat: " + e.message, "err"); });
     });
+    return savePromise;
+  }
+  function flushNow(){
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; return flush(current); }
+    return savePromise;
+  }
+  function showSaved(){
+    if (!current) { setSave("–"); return; }
+    if (current.status === "final") setSave("finalizată " + when(current.finalized_at));
+    else if (Object.keys(state).length) setSave("salvat " + when(current.updated_at), "ok");
+    else setSave("necompletat");
   }
   window.addEventListener("beforeunload", function(e){ if (pending) { e.preventDefault(); e.returnValue = ""; } });
 
-  function load(){
-    return api("GET").then(function(d){
-      var answers = d.answers && typeof d.answers === "object" ? d.answers : {};
-      if (Object.keys(answers).length) { setSave("salvat " + when(d.updated_at), "ok"); return answers; }
-      var legacy = null;
-      try { legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || "null"); } catch(e) {}
-      if (legacy && typeof legacy === "object" && Object.keys(legacy).length) {
-        return api("PUT", {answers: legacy}).then(function(r){
-          try { localStorage.removeItem(LEGACY_KEY); } catch(e) {}
-          setSave("salvat " + when(r.updated_at), "ok");
-          return legacy;
-        });
-      }
-      setSave("necompletat");
-      return answers;
+  // ---------- completări ----------
+  function loadList(){ return api("GET").then(function(d){ sessions = d.sessions || []; }); }
+  function defaultName(){ return "Autoevaluare " + new Date().toLocaleDateString("ro-RO"); }
+  function createSession(name, answers){
+    var body = {name: name}; if (answers) body.answers = answers;
+    return api("POST", "", body).then(function(d){ return d.session; });
+  }
+  function ensureSession(){
+    // deschide ultima completare folosită în acest browser, altfel cea mai recent modificată; fără niciuna, creează una
+    if (!sessions.length) return createSession(defaultName()).then(function(s){ return loadList().then(function(){ return s.id; }); });
+    var last = null; try { last = localStorage.getItem(LAST_KEY); } catch(e) {}
+    var found = sessions.filter(function(s){ return s.id === last; })[0];
+    return Promise.resolve((found || sessions[0]).id);
+  }
+  function openSession(id){
+    return flushNow().then(function(){ return api("GET", "/" + id); }).then(function(d){
+      current = d.session;
+      current.answers = current.answers && typeof current.answers === "object" ? current.answers : {};
+      state = current.answers;
+      try { localStorage.setItem(LAST_KEY, id); } catch(e) {}
+      render(); compute(); renderBar(); setReadOnly(current.status !== "draft"); showSaved();
     });
   }
+  function renderBar(){
+    selEl.innerHTML = sessions.map(function(s){
+      return '<option value="' + s.id + '"' + (current && s.id === current.id ? ' selected' : '') + '>' + esc(s.name) + (s.status === "final" ? " · finalizată" : " · în lucru") + '</option>';
+    }).join("");
+    var isFinal = !!current && current.status === "final";
+    finalBtn.innerHTML = isFinal ? "Redeschide" : '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Finalizează';
+    finalBtn.disabled = delBtn.disabled = selEl.disabled = !current;
+    renderInfo();
+  }
+  function renderInfo(){
+    infoEl.className = "toolbar-info";
+    if (!current) { infoEl.textContent = ""; return; }
+    var t = (current.status === "final" ? "Finalizată " + whenFull(current.finalized_at) : "În lucru") + " · creată de " + (current.created_by || "–") + " la " + whenFull(current.created_at);
+    if (current.updated_by && current.updated_at !== current.created_at) t += " · modificată de " + current.updated_by + " la " + whenFull(current.updated_at);
+    infoEl.textContent = t;
+  }
+  function setReadOnly(ro){
+    areasEl.querySelectorAll("input").forEach(function(i){ i.disabled = ro; });
+    $("resetBtn").hidden = ro;
+    if (ro) $("confirmBox").hidden = true;
+  }
+  selEl.addEventListener("change", function(){ openSession(selEl.value).catch(barError); });
+  finalBtn.addEventListener("click", function(){
+    if (!current) return;
+    var next = current.status === "final" ? "draft" : "final", id = current.id;
+    finalBtn.disabled = true;
+    flushNow().then(function(){ return api("PUT", "/" + id, {status: next}); })
+      .then(loadList).then(function(){ return openSession(id); }).catch(function(e){ finalBtn.disabled = false; barError(e); });
+  });
+  delBtn.addEventListener("click", function(){ delConfirm.hidden = false; $("delYes").focus(); });
+  $("delNo").addEventListener("click", function(){ delConfirm.hidden = true; delBtn.focus(); });
+  $("delYes").addEventListener("click", function(){
+    if (!current) return;
+    var id = current.id;
+    clearTimeout(saveTimer); saveTimer = null; pending = false;
+    delConfirm.hidden = true; delBtn.disabled = true;
+    savePromise.then(function(){ return api("DELETE", "/" + id); }).then(function(){ current = null; return loadList(); })
+      .then(ensureSession).then(openSession).catch(function(e){ delBtn.disabled = false; barError(e); });
+  });
+
+  // ---------- modale (portal): Escape, ×, butoane; focusul revine la elementul care a deschis ----------
+  function openModal(el, focusEl){ el.hidden = false; document.documentElement.classList.add("modal-open"); if (focusEl) focusEl.focus({preventScroll: true}); }
+  function closeModal(el){ el.hidden = true; if (!document.querySelector(".modal-backdrop:not([hidden])")) document.documentElement.classList.remove("modal-open"); }
+  function openInfo(){ infoBtn.setAttribute("aria-expanded", "true"); openModal(infoModal, infoModal.querySelector(".modal")); }
+  function closeInfo(){ closeModal(infoModal); infoBtn.setAttribute("aria-expanded", "false"); infoBtn.focus(); }
+  infoBtn.addEventListener("click", openInfo);
+  $("infoClose").addEventListener("click", closeInfo);
+  $("infoOk").addEventListener("click", closeInfo);
+  // modal doar informativ: fundalul închide numai dacă apăsarea începe și se termină pe fundal, fără deplasare și fără selecție de text
+  var pd = null;
+  infoModal.addEventListener("pointerdown", function(e){ pd = e.target === infoModal ? {x: e.clientX, y: e.clientY} : null; });
+  infoModal.addEventListener("pointerup", function(e){
+    var sel = window.getSelection ? String(window.getSelection()) : "";
+    if (pd && e.target === infoModal && Math.abs(e.clientX - pd.x) < 6 && Math.abs(e.clientY - pd.y) < 6 && !sel) closeInfo();
+    pd = null;
+  });
+  function openNew(){ newName.value = defaultName(); openModal(newModal, newName); newName.select(); }
+  function closeNew(){ closeModal(newModal); newBtn.focus(); }
+  newBtn.addEventListener("click", openNew);
+  $("newClose").addEventListener("click", closeNew);
+  $("newCancel").addEventListener("click", closeNew);
+  newForm.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var name = newName.value.trim();
+    if (!name) { newName.focus(); return; }
+    var btn = newForm.querySelector('button[type="submit"]'); btn.disabled = true;
+    flushNow().then(function(){ return createSession(name); }).then(function(s){ closeNew(); return loadList().then(function(){ return openSession(s.id); }); })
+      .catch(barError).then(function(){ btn.disabled = false; });
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape") return;
+    if (!newModal.hidden) closeNew();
+    else if (!infoModal.hidden) closeInfo();
+  });
 
   function qid(a,i){ if (a.id!=='F') return a.id+(i+1); var g=a.q[i].g, n=0; for (var k=0;k<=i;k++) if (a.q[k].g===g) n++; return 'F'+g.charAt(0)+'.'+n; }
   function lei(a,b){ var f=function(v){ return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }; return a===b ? f(a)+' lei' : f(a)+'–'+f(b)+' lei'; }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
   function basisHtml(b){ return esc(b).replace(/\[V[^\]]*\]/g, function(m){ return '<span class="v">'+m+'</span>'; }); }
 
-  // render
-  var areasEl = document.getElementById("areas");
+
   function render(){
     var h = [];
     DATA.forEach(function(a){
@@ -301,13 +514,14 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-si
         });
         h.push('</div>');
         var note = state[id] && state[id].n ? state[id].n : "";
-        h.push('<div class="note"><input type="text" id="n-'+id+'" placeholder="Observații / dovada verificată / motivare N.A." value="'+esc(note)+'" maxlength="300"></div>');
+        h.push('<div class="note"><input class="input" type="text" id="n-'+id+'" placeholder="Observații / dovada verificată / motivare N.A." value="'+esc(note)+'" maxlength="300"></div>');
         h.push('</div>');
       });
       h.push('</div></section>');
     });
     areasEl.innerHTML = h.join("");
   }
+
 
   areasEl.addEventListener("change", function(ev){
     var t = ev.target;
@@ -367,12 +581,13 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-si
 
     // gaps
     var lab = {partial:"Parțial", nu:"Nu"};
-    function list(arr, empty){ if (!arr.length) return '<p class="empty">'+empty+'</p>'; return '<ul>'+arr.map(function(g){ return '<li><b>'+g.id+'</b> ('+lab[g.a]+', R'+g.q.c+') '+esc(g.q.t)+' <span style="color:var(--muted)">· '+g.q.bh+' · cost estimat '+lei(g.q.cmin,g.q.cmax)+(g.q.pen?' · penal':'')+'</span></li>'; }).join("")+'</ul>'; }
+    function list(arr, empty){ if (!arr.length) return '<p class="empty">'+empty+'</p>'; return '<ul>'+arr.map(function(g){ return '<li><b>'+g.id+'</b> ('+lab[g.a]+', R'+g.q.c+') '+esc(g.q.t)+' <span>· '+g.q.bh+' · cost estimat '+lei(g.q.cmin,g.q.cmax)+(g.q.pen?' · penal':'')+'</span></li>'; }).join("")+'</ul>'; }
     document.getElementById("gaps").innerHTML =
       '<h3>Prioritate 1 · neconformități critice (R4 cu Nu / Parțial) · termen 5 zile lucrătoare</h3>'+list(gaps[1],"Nicio neconformitate critică înregistrată.")+
       '<h3>Prioritate 2 · R3 cu Nu · termen 30 zile</h3>'+list(gaps[2],"Nimic de remediat la prioritatea 2.")+
       '<h3>Prioritate 3 · celelalte răspunsuri Nu / Parțial · termen 90 zile</h3>'+list(gaps[3],"Nimic de remediat la prioritatea 3.");
   }
+
 
   function report(){
     if (!last) return "";
@@ -398,45 +613,44 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rule);font-si
     return L.join("\n");
   }
 
-  var status = document.getElementById("status");
-  document.getElementById("copyBtn").addEventListener("click", function(){
-    var txt = report(), ta = document.getElementById("reportText");
-    function fallback(){ ta.hidden = false; ta.value = txt; ta.style.width="100%"; ta.style.minHeight="200px"; ta.style.marginTop="10px"; ta.focus(); ta.select(); status.textContent = "Copierea automată nu este disponibilă aici; textul este selectat mai jos."; }
+
+  $("copyBtn").addEventListener("click", function(){
+    var txt = report(), ta = $("reportText");
+    function fallback(){ ta.hidden = false; ta.value = txt; ta.focus(); ta.select(); status.textContent = "Copierea automată nu este disponibilă aici; textul este selectat mai jos."; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(txt).then(function(){ status.textContent = "Raport copiat."; }, fallback);
     } else fallback();
   });
-  var cb = document.getElementById("confirmBox");
-  document.getElementById("resetBtn").addEventListener("click", function(){ cb.hidden = false; });
-  document.getElementById("resetNo").addEventListener("click", function(){ cb.hidden = true; });
-  document.getElementById("resetYes").addEventListener("click", function(){
-    state = {}; save(); cb.hidden = true;
+  var cb = $("confirmBox");
+  $("resetBtn").addEventListener("click", function(){ cb.hidden = false; });
+  $("resetNo").addEventListener("click", function(){ cb.hidden = true; });
+  $("resetYes").addEventListener("click", function(){
+    if (!current) return;
+    state = current.answers = {}; save(); cb.hidden = true;
     areasEl.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
     areasEl.querySelectorAll('input[type=text]').forEach(function(t){ t.value = ""; });
     status.textContent = "Răspunsurile au fost șterse.";
     compute();
   });
 
-  var infoBtn = document.getElementById("infoBtn"), infoPop = document.getElementById("infoPop");
-  function setInfo(open){ infoPop.hidden = !open; infoBtn.setAttribute("aria-expanded", open ? "true" : "false"); if (open) infoPop.querySelector("a,button").focus({preventScroll:true}); }
-  infoBtn.addEventListener("click", function(){ setInfo(infoPop.hidden); });
-  document.getElementById("infoClose").addEventListener("click", function(){ setInfo(false); infoBtn.focus(); });
-  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !infoPop.hidden) { setInfo(false); infoBtn.focus(); } });
-  document.addEventListener("click", function(e){ if (!infoPop.hidden && !infoPop.contains(e.target) && !infoBtn.contains(e.target)) setInfo(false); });
-
+  // ---------- pornire: lista completărilor, preluarea răspunsurilor vechi din browser, deschidere ----------
   setSave("se încarcă…");
-  load().then(function(loaded){
-    state = loaded;
-    render();
-    compute();
-  }, function(e){
+  loadList().then(function(){
+    var legacy = null;
+    try { legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || "null"); } catch(e) {}
+    if (legacy && typeof legacy === "object" && Object.keys(legacy).length) {
+      return createSession("Răspunsuri din browser " + new Date().toLocaleDateString("ro-RO"), legacy).then(function(s){
+        try { localStorage.removeItem(LEGACY_KEY); } catch(e) {}
+        return loadList().then(function(){ return s.id; });
+      });
+    }
+    return ensureSession();
+  }).then(openSession).catch(function(e){
     setSave("neîncărcat: " + e.message + "; reîncarcă pagina", "err");
-    render();
-    areasEl.querySelectorAll("input").forEach(function(i){ i.disabled = true; });
-    compute();
+    render(); setReadOnly(true); compute(); renderBar();
+    newBtn.disabled = true;
   });
 })();
 </script>
-
 </body>
 </html>

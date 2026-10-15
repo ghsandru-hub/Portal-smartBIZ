@@ -114,17 +114,23 @@ function db_init_schema($pdo) {
         CREATE INDEX idx_favorites_user ON favorites(user_id, position);
         CREATE INDEX idx_favorites_section ON favorites(section_id, position);
         CREATE INDEX idx_users_company ON users(company_cui);
-        CREATE TABLE questionnaire_responses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
+        CREATE TABLE questionnaire_sessions (
+            id TEXT PRIMARY KEY,
             code TEXT NOT NULL,
+            company_cui TEXT,
+            user_id INTEGER,
+            updated_by INTEGER,
+            name TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'draft',
             answers TEXT NOT NULL DEFAULT '{}',
             created_at INTEGER NOT NULL,
             updated_at INTEGER NOT NULL,
-            UNIQUE (user_id, code),
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            finalized_at INTEGER,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
         );
-        PRAGMA user_version = 3;
+        CREATE INDEX idx_questionnaire_sessions_scope ON questionnaire_sessions(code, company_cui, updated_at);
+        PRAGMA user_version = 4;
     ");
 }
 
@@ -184,6 +190,40 @@ function db_migrate($pdo) {
             )
         ");
         $pdo->exec('PRAGMA user_version = 3');
+    }
+    if ($version < 4) {
+        // Completari multiple per chestionar, comune utilizatorilor aceleiasi firme (CUI);
+        // fara firma raman ale utilizatorului. Inlocuieste questionnaire_responses (un rand per utilizator).
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS questionnaire_sessions (
+                id TEXT PRIMARY KEY,
+                code TEXT NOT NULL,
+                company_cui TEXT,
+                user_id INTEGER,
+                updated_by INTEGER,
+                name TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'draft',
+                answers TEXT NOT NULL DEFAULT '{}',
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                finalized_at INTEGER,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+                FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+            )
+        ");
+        $pdo->exec("CREATE INDEX IF NOT EXISTS idx_questionnaire_sessions_scope ON questionnaire_sessions(code, company_cui, updated_at)");
+        $old = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'questionnaire_responses'")->fetchColumn();
+        if ($old) {
+            $rows = $pdo->query("SELECT r.*, u.company_cui FROM questionnaire_responses r LEFT JOIN users u ON u.id = r.user_id")->fetchAll();
+            $ins = $pdo->prepare('INSERT INTO questionnaire_sessions (id, code, company_cui, user_id, updated_by, name, status, answers, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            foreach ($rows as $r) {
+                if ($r['answers'] === '{}' || $r['answers'] === '[]') continue;
+                $cui = is_string($r['company_cui']) && trim($r['company_cui']) !== '' ? trim($r['company_cui']) : null;
+                $ins->execute([gen_id(), $r['code'], $cui, $r['user_id'], $r['user_id'], 'Autoevaluare ' . date('d.m.Y', (int)$r['updated_at']), 'draft', $r['answers'], (int)$r['created_at'], (int)$r['updated_at']]);
+            }
+            $pdo->exec('DROP TABLE questionnaire_responses');
+        }
+        $pdo->exec('PRAGMA user_version = 4');
     }
 }
 

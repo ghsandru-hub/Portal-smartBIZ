@@ -65,8 +65,8 @@ try {
         route_apps($method, $m[1] ?: null);
     } elseif (preg_match('#^/favorites/?(.*)$#', $path, $m)) {
         route_favorites($method, $m[1] ?: null);
-    } elseif (preg_match('#^/questionnaires/([a-z0-9-]{1,40})$#', $path, $m)) {
-        route_questionnaire($method, $m[1]);
+    } elseif (preg_match('#^/questionnaires/([a-z0-9-]{1,40})(?:/([a-f0-9]{16}))?$#', $path, $m)) {
+        route_questionnaire($method, $m[1], $m[2] ?? null);
     } elseif ($path === '/admin/users') {
         if ($method === 'GET') route_admin_users();
         elseif ($method === 'POST') route_admin_users_create();
